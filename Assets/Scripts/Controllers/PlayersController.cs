@@ -1,4 +1,6 @@
-﻿using Game_Code.Domain;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Game_Code.Domain;
 using Services;
 using UnityEngine;
 using Zenject;
@@ -28,6 +30,11 @@ namespace Controllers
             var player = playerInstance.GetComponent<Player>();
             player.actor.id = _actorsIdService.GetNewId();
             _playerService.RegisterPlayer(player);
+        }
+
+        public IEnumerable<Player> GetAllPlayers()
+        {
+            return _playerService.GetAllPlayers();
         }
     }
 }

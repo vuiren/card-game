@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Game_Code.Domain;
 using UnityEngine;
 
@@ -8,6 +10,7 @@ namespace Services
     {
         void RegisterPlayer(Player player);
         Player GetPlayer(int id);
+        Player[] GetAllPlayers();
     }
     
     public class PlayerService:MonoBehaviour, IPlayerService
@@ -36,6 +39,11 @@ namespace Services
 
             Debug.LogWarning($"Player with id: '{id}' not found");
             return null;
+        }
+
+        public Player[] GetAllPlayers()
+        {
+            return _players.Values.ToArray();
         }
     }
 }

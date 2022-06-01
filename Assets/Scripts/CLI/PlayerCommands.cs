@@ -37,11 +37,11 @@ namespace CLI
         [Command("players.printAll")]
         public void PrintAll()
         {
-            var lastId = 0;
+            var players = _playerService.GetAllPlayers();
 
-            while (_playerService.GetPlayer(lastId))
+            foreach (var player in players)
             {
-                lastId++;
+                Debug.Log($"Player: '{player}'");
             }
         }
     }
