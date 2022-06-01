@@ -13,7 +13,7 @@ namespace Services
         IEnumerable<Player> GetAllPlayers();
     }
     
-    public class PlayerService:MonoBehaviour, IPlayerService
+    public class PlayerService: IPlayerService
     {
         private readonly Dictionary<int, Player> _players = new();
         

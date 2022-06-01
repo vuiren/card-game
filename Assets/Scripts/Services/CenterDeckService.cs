@@ -14,7 +14,7 @@ namespace Services
         CardSheet[] GetAllCardsInCenter();
     }
     
-    public class CenterDeckService : MonoBehaviour, ICenterDeckService
+    public class CenterDeckService : ICenterDeckService
     {
         private List<CardSheet> _cardsInCenter;
 

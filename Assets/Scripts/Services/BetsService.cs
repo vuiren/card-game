@@ -10,7 +10,7 @@ namespace Services
         void ClearBet(Player player);
     }
     
-    public class BetsService : MonoBehaviour, IBetsService
+    public class BetsService : IBetsService
     {
         private readonly Dictionary<int, int> _bets = new();
 

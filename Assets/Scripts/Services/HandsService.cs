@@ -14,7 +14,7 @@ namespace Services
         Card[] GetHand(Player player);
     }
 
-    public class HandsService : MonoBehaviour, IHandsService
+    public class HandsService : IHandsService
     {
         private readonly Dictionary<int, List<Card>> _hands = new();
 
@@ -26,7 +26,7 @@ namespace Services
                 for (var index = 0; index < previousHand.Count; index++)
                 {
                     var card = previousHand[index];
-                    Destroy(card.gameObject);
+                    Object.Destroy(card.gameObject);
                 }
 
                 _hands[player.actor.id] = cards.ToList();

@@ -11,7 +11,7 @@ namespace Services
         Player CurrentTurn();
     }
 
-    public class TurnsService : MonoBehaviour, ITurnsService
+    public class TurnsService : ITurnsService
     {
         private Queue<Player> _players;
         private Player _currentPlayer;

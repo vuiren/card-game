@@ -8,7 +8,7 @@ namespace Services
         int GetNewId();
     }
 
-    public class ActorsIdService : MonoBehaviour, IActorsIdService
+    public class ActorsIdService : IActorsIdService
     {
         private int _lastId = -1;
 
