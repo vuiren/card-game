@@ -10,7 +10,7 @@ namespace Services
     {
         void RegisterPlayer(Player player);
         Player GetPlayer(int id);
-        Player[] GetAllPlayers();
+        IEnumerable<Player> GetAllPlayers();
     }
     
     public class PlayerService:MonoBehaviour, IPlayerService
@@ -41,7 +41,7 @@ namespace Services
             return null;
         }
 
-        public Player[] GetAllPlayers()
+        public IEnumerable<Player> GetAllPlayers()
         {
             return _players.Values.ToArray();
         }

@@ -1,5 +1,6 @@
 using CLI;
 using Controllers;
+using Factories;
 using Scriptable_Objects;
 using Services;
 using UnityEngine;
@@ -13,5 +14,6 @@ public class GameInstaller : MonoInstaller
         Container.BindInstance(configuration).AsSingle();
         ServicesDependencyInjection.Inject(Container);
         ControllersDependencyInjection.Inject(Container);
+        FactoriesDependencyInjection.Inject(Container);
     }
 }

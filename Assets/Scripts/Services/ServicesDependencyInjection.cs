@@ -41,6 +41,13 @@ namespace Services
                 Debug.LogError("No handsService Found");
             }
             container.Bind<IHandsService>().FromInstance(handsService).AsSingle();
+            
+            var centerDeckService = Object.FindObjectOfType<CenterDeckService>();
+            if (!centerDeckService)
+            {
+                Debug.LogError("No centerDeckService Found");
+            }
+            container.Bind<ICenterDeckService>().FromInstance(centerDeckService).AsSingle();
         }
     }
 }

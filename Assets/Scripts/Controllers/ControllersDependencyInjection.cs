@@ -20,6 +20,13 @@ namespace Controllers
                 Debug.LogError("No hands controller found");
             }
             container.BindInstance(handsController).AsSingle();
+            
+            var centerDeckController = Object.FindObjectOfType<CenterDeckController>();
+            if (!centerDeckController)
+            {
+                Debug.LogError("No centerDeckController found");
+            }
+            container.BindInstance(centerDeckController).AsSingle();
         }
     }
 }

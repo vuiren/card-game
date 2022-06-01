@@ -12,13 +12,16 @@ public class GameManager : MonoBehaviour
     private PlayersController _playersController;
     private ITurnsService _turnsService;
     private HandsController _handsController;
-
+    private CenterDeckController _centerDeckController;
+    
     [Inject]
-    public void Construct(ITurnsService turnsService, HandsController handsController, PlayersController playersController)
+    public void Construct(ITurnsService turnsService, HandsController handsController, 
+        CenterDeckController centerDeckController, PlayersController playersController)
     {
         _playersController = playersController;
         _turnsService = turnsService;
         _handsController = handsController;
+        _centerDeckController = centerDeckController;
     }
 
     private void Start()
@@ -31,9 +34,12 @@ public class GameManager : MonoBehaviour
         var players = _playersController.GetAllPlayers().ToArray();
         _turnsService.SetTurnsOrder(new Queue<Player>(players));
 
+        _centerDeckController.CreateCenterDeck();
+        
         foreach (var player in players)
         {
-            _handsController.SetRandomHandForPlayer(player, 3);
+            var cards = _centerDeckController.GetCards(3);
+            _handsController.SetHand(player, cards);
         }
         
         _turnsService.NextTurn();

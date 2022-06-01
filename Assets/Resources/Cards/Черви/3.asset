@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: 3
   m_EditorClassIdentifier: 
   cardId: 15
-  cardName: "\u0422\u0440\u043E\u0439\u043A\u0430 \u043F\u0438\u043A"
+  cardName: "\u0422\u0440\u043E\u0439\u043A\u0430 \u0447\u0435\u0440\u0432\u0435\u0439"
   cardSuit: 1
   cardSprite: {fileID: 1826536028, guid: e7db9d40cfd6f234da6ba06efa6ca4e3, type: 3}

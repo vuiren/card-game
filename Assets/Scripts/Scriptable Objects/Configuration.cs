@@ -6,5 +6,6 @@ namespace Scriptable_Objects
     public class Configuration : ScriptableObject
     {
         public CardSheet[] cardsInGame;
+        public GameObject cardPrefab;
     }
 }
