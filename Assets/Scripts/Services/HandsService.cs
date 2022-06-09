@@ -11,7 +11,7 @@ namespace Services
     {
         void SetHand(Player player, IEnumerable<Card> cards);
         void RemoveFromHand(Player player, Card card);
-        Card[] GetHand(Player player);
+        IEnumerable<Card> GetHand(Player player);
     }
 
     public class HandsService : IHandsService
@@ -22,13 +22,6 @@ namespace Services
         {
             if (_hands.ContainsKey(player.actor.id))
             {
-                var previousHand = _hands[player.actor.id];
-                for (var index = 0; index < previousHand.Count; index++)
-                {
-                    var card = previousHand[index];
-                    Object.Destroy(card.gameObject);
-                }
-
                 _hands[player.actor.id] = cards.ToList();
             }
             else
@@ -50,7 +43,7 @@ namespace Services
             }
         }
 
-        public Card[] GetHand(Player player)
+        public IEnumerable<Card> GetHand(Player player)
         {
             return _hands.ContainsKey(player.actor.id) ? _hands[player.actor.id].ToArray() : null;
         }

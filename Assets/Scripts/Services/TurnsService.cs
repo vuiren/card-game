@@ -23,6 +23,13 @@ namespace Services
 
         public void NextTurn()
         {
+            if (_players.Count == 0)
+            {
+                Debug.LogWarning("No players in queue left");
+                _currentPlayer = null;
+                return;
+            }
+            
             _currentPlayer = _players.Dequeue();
         }
 

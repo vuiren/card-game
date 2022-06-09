@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Domain;
+using UnityEngine;
 using Zenject;
 
 namespace Services
@@ -12,7 +13,13 @@ namespace Services
             container.Bind<IBetsService>().FromInstance(new BetsService()).AsSingle();
             container.Bind<ITurnsService>().FromInstance(new TurnsService()).AsSingle();
             container.Bind<IHandsService>().FromInstance(new HandsService()).AsSingle();
-            container.Bind<ICenterDeckService>().FromInstance(new CenterDeckService()).AsSingle();
+
+            var centerDeckService = new CenterDeckService();
+            container.Bind<ICenterDeckService>().FromInstance(centerDeckService).AsSingle();
+            container.Bind<ISessionService>().FromInstance(new SessionService(centerDeckService)).AsSingle();
+
+            var decks = Object.FindObjectsOfType<PlayerDeck>();
+            container.Bind<IDeckService>().FromInstance(new DeckService(decks)).AsSingle();
         }
     }
 }

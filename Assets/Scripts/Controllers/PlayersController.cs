@@ -32,6 +32,11 @@ namespace Controllers
             _playerService.RegisterPlayer(player);
         }
 
+        public Player GetPlayer(int id)
+        {
+            return _playerService.GetPlayer(id);
+        }
+
         public IEnumerable<Player> GetAllPlayers()
         {
             return _playerService.GetAllPlayers();

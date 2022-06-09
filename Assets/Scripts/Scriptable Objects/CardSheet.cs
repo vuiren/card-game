@@ -17,6 +17,7 @@ namespace Scriptable_Objects
         public string cardName = "Карта";
         public Suit cardSuit;
         public Sprite cardSprite;
+        public int cardValue;
 
         public override string ToString()
         {

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Scriptable_Objects;
+using UnityEngine;
 using Zenject;
 
 namespace Factories
@@ -7,14 +8,8 @@ namespace Factories
     {
         public static void Inject(DiContainer container)
         {
-            var cardsFactory = Object.FindObjectOfType<CardsFactory>();
-
-            if (!cardsFactory)
-            {
-                Debug.LogError("No cardsFactory found");
-            }
-
-            container.BindInstance(cardsFactory).AsSingle();
+            var configuration = container.Resolve<Configuration>();
+            container.BindInstance(new CardsFactory(configuration)).AsSingle();
         }
     }
 }

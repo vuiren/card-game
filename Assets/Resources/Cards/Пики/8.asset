@@ -16,3 +16,4 @@ MonoBehaviour:
   cardName: "\u0412\u043E\u0441\u044C\u043C\u0451\u0440\u043A\u0430 \u043F\u0438\u043A"
   cardSuit: 0
   cardSprite: {fileID: 1338921051, guid: e7db9d40cfd6f234da6ba06efa6ca4e3, type: 3}
+  cardValue: 8

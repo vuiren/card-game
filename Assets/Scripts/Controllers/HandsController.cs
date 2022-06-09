@@ -18,29 +18,28 @@ namespace Controllers
         private Configuration _configuration;
         private IHandsService _handsService;
         private CardsFactory _cardsFactory;
-
-        private PlayerDeck[] _decks;
-        private Queue<PlayerDeck> _decksQueue;
-
-
+        private IDeckService _deckService;
+        
         [Inject]
-        public void Construct(Configuration configuration, IHandsService handsService, CardsFactory cardsFactory)
+        public void Construct(Configuration configuration, IHandsService handsService, 
+            CardsFactory cardsFactory, IDeckService deckService)
         {
             _configuration = configuration;
             _handsService = handsService;
             _cardsFactory = cardsFactory;
-            _decks = FindObjectsOfType<PlayerDeck>();
-            _decksQueue = new Queue<PlayerDeck>(_decks);
+            _deckService = deckService;
         }
 
         public void SetHand(Player player, IEnumerable<CardSheet> cards)
         {
-            var deck = _decksQueue.Dequeue();
-
+            var deck = _deckService.GetPlayerDeck(player);
+            _deckService.ClearDeck(deck.actor.id);
+            
             var hand = cards
                 .Select(cardSheet => _cardsFactory.CreateCard(deck.hand, cardSheet))
                 .ToList();
 
+            deck.SetCards(hand.ToArray());
             deck.StructureHand();
             _handsService.SetHand(player, hand);
         }
@@ -48,7 +47,7 @@ namespace Controllers
         public void SetRandomHandForPlayer(Player player, int cardsCount)
         {
             var hand = new List<Card>();
-            var deck = _decksQueue.Dequeue();
+            var deck = _deckService.GetPlayerDeck(player);
             
             for (var i = 0; i < cardsCount; i++)
             {
