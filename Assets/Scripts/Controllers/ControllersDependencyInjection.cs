@@ -27,6 +27,13 @@ namespace Controllers
                 Debug.LogError("No centerDeckController found");
             }
             container.BindInstance(centerDeckController).AsSingle();
+            
+            var gameController = Object.FindObjectOfType<GameController>();
+            if (!gameController)
+            {
+                Debug.LogError("No gameController found");
+            }
+            container.BindInstance(gameController).AsSingle();
         }
     }
 }

@@ -23,13 +23,17 @@ namespace Controllers
             _playersParent = new GameObject("Players");
         }
         
-        public void CreatePlayer()
+        public void CreatePlayer(bool localPlayer = false)
         {
             Debug.Log("Creating player");
             var playerInstance = Instantiate(playerPrefab, _playersParent.transform);
             var player = playerInstance.GetComponent<Player>();
             player.actor.id = _actorsIdService.GetNewId();
             _playerService.RegisterPlayer(player);
+            if (localPlayer)
+            {
+                _playerService.CurrentPlayer = player;
+            }
         }
 
         public Player GetPlayer(int id)

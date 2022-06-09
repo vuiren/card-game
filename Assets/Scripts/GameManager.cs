@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Controllers;
+using Domain;
 using Factories;
-using Firebase;
 using Game_Code.Domain;
+using Scriptable_Objects;
 using Services;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -20,12 +20,11 @@ public class GameManager : MonoBehaviour
     private ISessionService _sessionService;
     private IDeckService _deckService;
     private CardsFactory _cardsFactory;
-    private FirebaseApp _firebaseApp;
     
     [Inject]
     public void Construct(ITurnsService turnsService, HandsController handsController, 
         CenterDeckController centerDeckController, PlayersController playersController, 
-        ISessionService sessionService, IDeckService deckService, CardsFactory cardsFactory, FirebaseApp firebaseApp)
+        ISessionService sessionService, IDeckService deckService, CardsFactory cardsFactory)
     {
         _playersController = playersController;
         _turnsService = turnsService;
@@ -34,12 +33,11 @@ public class GameManager : MonoBehaviour
         _sessionService = sessionService;
         _deckService = deckService;
         _cardsFactory = cardsFactory;
-        _firebaseApp = firebaseApp;
     }
 
     private void Start()
     {
-        _playersController.CreatePlayer();
+        _playersController.CreatePlayer(true);
         _playersController.CreatePlayer();
         _playersController.CreatePlayer();
         _playersController.CreatePlayer();
@@ -108,4 +106,6 @@ public class GameManager : MonoBehaviour
         _sessionService.AddCardToSession(player.actor.id, card.cardSheet);
         _turnsService.NextTurn();
     }
+    
+
 }

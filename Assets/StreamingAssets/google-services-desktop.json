@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "911344951465",
+    "firebase_url": "https://card-game-19873-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "card-game-19873",
+    "storage_bucket": "card-game-19873.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911344951465:android:5cc2a08680568dba03c9b8",
+        "android_client_info": {
+          "package_name": "com.google.firebase.ohHell"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "911344951465-3hrvde2k23uf6tlv87mgeqknd4vsgolj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyWKLT6jOfuQAgd7-YyEUL-rUcAYU5Vnk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "911344951465-3hrvde2k23uf6tlv87mgeqknd4vsgolj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

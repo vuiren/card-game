@@ -9,7 +9,7 @@ namespace Factories
         public static void Inject(DiContainer container)
         {
             var configuration = container.Resolve<Configuration>();
-            container.BindInstance(new CardsFactory(configuration)).AsSingle();
+            container.BindInstance(new CardsFactory(configuration, container)).AsSingle();
         }
     }
 }

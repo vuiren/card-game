@@ -1,5 +1,6 @@
 ﻿using System;
 using Game_Code;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Domain
@@ -10,24 +11,18 @@ namespace Domain
         public Actor actor;
         public Transform hand, selectedMapPoint;
         [SerializeField] private float gapBetweenCards;
+        [SerializeField] private Transform hiddenCardRoot;
+        [SerializeField] private bool cardsHidden;
 
         private Card[] _cards;
         private void Awake()
         {
-            actor = GetComponent<Actor>();
-        }
-
-        public void PlaceACard(Card card)
-        {
-            
-        }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.K))
+            if (cardsHidden)
             {
-                StructureHand();
+                hiddenCardRoot.GameObject().SetActive(true);
+                hand.gameObject.SetActive(false);
             }
+            actor = GetComponent<Actor>();
         }
 
         public void SetCards(Card[] cards)

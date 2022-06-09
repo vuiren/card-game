@@ -6,7 +6,7 @@ namespace Services
 {
     public interface IBetsService
     {
-        void MakeBet(Player player, int bet);
+        void MakeABet(Player player, int bet);
         void ClearBet(Player player);
     }
     
@@ -14,7 +14,7 @@ namespace Services
     {
         private readonly Dictionary<int, int> _bets = new();
 
-        public void MakeBet(Player player, int bet)
+        public void MakeABet(Player player, int bet)
         {
             if (_bets.ContainsKey(player.actor.id))
             {

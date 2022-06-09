@@ -11,6 +11,7 @@ namespace Services
         void RegisterPlayer(Player player);
         Player GetPlayer(int id);
         IEnumerable<Player> GetAllPlayers();
+        Player CurrentPlayer { get; set; }
     }
     
     public class PlayerService: IPlayerService
@@ -45,5 +46,7 @@ namespace Services
         {
             return _players.Values.ToArray();
         }
+
+        public Player CurrentPlayer { get; set; }
     }
 }
