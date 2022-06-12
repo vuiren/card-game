@@ -29,10 +29,10 @@ namespace CLI
         [Command("sessions.getWinner")]
         public void GetWinner()
         {
-            var winner = _sessionService.GetSessionWinnerId();
+            /*var winner = _sessionService.AnnounceSessionWinnerId();
             var cards = _sessionService.GetCardsInSession();
             var card = cards.FirstOrDefault(x => x.playerId == winner);
-            Debug.Log($"Player: '{winner}' won with '{card.playedCardId}'");
+            Debug.Log($"Player: '{winner}' won with '{card.playedCardId}'");*/
         }
     }
 }

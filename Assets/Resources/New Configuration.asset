@@ -15,7 +15,7 @@ MonoBehaviour:
   playerId: 0
   playerName: dsa
   gameId: aew
-  playersCount: 2
+  playersCount: 3
   isHost: 1
   cardsInGame:
   - {fileID: 11400000, guid: 9a3e3de52a257d24caf3cdf092765438, type: 2}

@@ -38,7 +38,7 @@ namespace Controllers
 
         private void UpdateList(List<PlayerData> obj)
         {
-            playersList.text = "";
+            playersList.text = "Игроки:\n";
             for (var index = 0; index < obj.Count; index++)
             {
                 var playerData = obj[index];

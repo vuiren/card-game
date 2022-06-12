@@ -36,14 +36,14 @@ namespace Controllers
 
             _centerDeckService.SetCards(_cardsInGame);
             var card = GetCards(1)[0];
-            var cardInstance = _cardsFactory.CreateCard(_centerDeck.trumpCardRoot, card);
+            var cardInstance = _cardsFactory.CreateCard(_centerDeck.trumpCardRoot, card, -1);
             _centerDeckService.SetTrumpCard(cardInstance.GetComponent<Card>().cardSheet.cardId);
         }
 
-        public void SyncCenterDeck()
+        public async void SyncCenterDeck()
         {
             var card = _centerDeckService.GetTrumpCard();
-            var cardInstance = _cardsFactory.CreateCard(_centerDeck.trumpCardRoot, card);
+            var cardInstance = _cardsFactory.CreateCard(_centerDeck.trumpCardRoot, card, -1);
             _centerDeckService.SetTrumpCard(cardInstance.GetComponent<Card>().cardSheet.cardId);
         }
 

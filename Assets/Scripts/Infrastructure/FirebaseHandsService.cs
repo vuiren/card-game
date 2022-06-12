@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Domain;
 using Domain.DTO;
@@ -33,11 +34,21 @@ namespace Infrastructure
 
                 if (_hands.ContainsKey(value.playerId))
                 {
-                    _hands[value.playerId] = ArrayMethods.TurnIdsStringToIntArray(value.cards);
+                    if (value.cards.Length == 0)
+                    {
+                        _hands[value.playerId] = Array.Empty<int>();
+                    }
+                    else
+                    {
+                        _hands[value.playerId] = ArrayMethods.TurnIdsStringToIntArray(value.cards);
+                    }
                 }
                 else
                 {
-                    _hands.Add(value.playerId, ArrayMethods.TurnIdsStringToIntArray(value.cards));
+                    _hands.Add(value.playerId,
+                        value.cards.Length == 0
+                            ? Array.Empty<int>()
+                            : ArrayMethods.TurnIdsStringToIntArray(value.cards));
                 }
             }
         }

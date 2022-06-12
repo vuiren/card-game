@@ -18,10 +18,10 @@ namespace Factories
         }
 
         
-        public Card CreateCard(Transform parent, CardSheet cardSheet)
+        public Card CreateCard(Transform parent, CardSheet cardSheet, int ownerId)
         {
             var card = Object.Instantiate(_configuration.cardPrefab, parent).GetComponent<Card>();
-            card.Construct(_diContainer.Resolve<GameController>(), _diContainer.Resolve<ITurnsService>(), _diContainer.Resolve<IPlayerService>());
+            card.Construct(ownerId,_diContainer.Resolve<GameController>(), _diContainer.Resolve<ITurnsService>(), _diContainer.Resolve<IPlayerService>());
             card.cardSheet = cardSheet;
             card.UpdateCard();
             

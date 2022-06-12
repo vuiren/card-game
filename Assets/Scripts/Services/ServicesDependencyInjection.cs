@@ -11,9 +11,10 @@ namespace Services
         public static void Inject(Configuration configuration, DiContainer container)
         {
             container.Bind<IPlayerService>().FromInstance(new FirebasePlayerService(configuration)).AsSingle();
-            container.Bind<IBetsService>().FromInstance(new BetsService()).AsSingle();
+            container.Bind<IBetsService>().FromInstance(new FirebaseBetsService(configuration)).AsSingle();
             container.Bind<ITurnsService>().FromInstance(new FirebaseTurnsService(configuration)).AsSingle();
             container.Bind<IHandsService>().FromInstance(new FirebaseHandsService(configuration)).AsSingle();
+            container.Bind<IScoreService>().FromInstance(new FirebaseScoreService(configuration)).AsSingle();
 
             var centerDeckService = new FirebaseCenterDeckService(configuration);
             container.Bind<ICenterDeckService>().FromInstance(centerDeckService).AsSingle();

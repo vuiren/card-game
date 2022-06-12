@@ -19,7 +19,8 @@ namespace Infrastructure
         private readonly DatabaseReference _databaseReference;
         private List<SessionPlayer> _sessionPlayers = new();
         private Action<List<SessionPlayer>> _onCardsChanged;
-        
+        private Action<int> _onSessionWinnerAnnounced;
+
         public FirebaseSessionService(Configuration configuration, ICenterDeckService centerDeckService)
         {
             _configuration = configuration;
@@ -52,7 +53,7 @@ namespace Infrastructure
             _databaseReference.Child(playerId.ToString()).SetRawJsonValueAsync(JsonUtility.ToJson(sessionPlayer));
         }
 
-        public int GetSessionWinnerId()
+        public void AnnounceSessionWinnerId()
         {
             var trumpCard = _centerDeckService.GetTrumpCard();
 
@@ -63,7 +64,7 @@ namespace Infrastructure
                 bestCard = card;
             }
 
-            return bestCard.playerId;
+            _onSessionWinnerAnnounced?.Invoke(bestCard.playerId);
         }
 
         public List<SessionPlayer> GetCardsInSession()
@@ -80,6 +81,11 @@ namespace Infrastructure
         public void OnCardAddedToSession(Action<List<SessionPlayer>> cards)
         {
             _onCardsChanged += cards;
+        }
+
+        public void OnSessionWinnerAnnounced(Action<int> action)
+        {
+            _onSessionWinnerAnnounced += action;
         }
     }
 }

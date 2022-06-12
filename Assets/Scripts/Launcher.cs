@@ -57,7 +57,7 @@ public class Launcher : MonoBehaviour
         Connect();
     }
 
-    private async UniTaskVoid Connect()
+    private async void Connect()
     {
         var value = await _databaseReference.Child(_configuration.gameId).Child("game").GetValueAsync();
         var gameData = JsonUtility.FromJson<GameData>(value.GetRawJsonValue());

@@ -3,10 +3,6 @@
     public interface IGameService
     {
         bool IsHostReady();
-        void SetHostReady();
-    }
-    public class GameService
-    {
-        
+        void SetHostReady(bool ready);
     }
 }

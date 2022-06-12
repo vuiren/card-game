@@ -2,6 +2,7 @@
 using System.Linq;
 using Domain;
 using Domain.DTO;
+using Extensions;
 using Firebase.Database;
 using Scriptable_Objects;
 using Services;
@@ -70,6 +71,7 @@ namespace Infrastructure
         {
             var enumerable = cardSheets as CardSheet[] ?? cardSheets.ToArray();
             _cardsInCenter = enumerable.Select(x => x.cardId).ToArray();
+            _cardsInCenter.Shuffle();
             var cardsInGame = ArrayMethods.TurnArrayToString(_cardsInCenter);
 
             var centerDeckData = new CenterDeckData()

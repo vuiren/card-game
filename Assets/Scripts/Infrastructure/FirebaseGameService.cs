@@ -32,9 +32,11 @@ namespace Infrastructure
             return _isHostReady;
         }
 
-        public void SetHostReady()
+        public void SetHostReady(bool ready)
         {
-            _isHostReady = true;
+            if(!_configuration.isHost) return;
+            
+            _isHostReady = ready;
             _gameReference.GetValueAsync().ContinueWith(x =>
             {
                 var gameData = JsonUtility.FromJson<GameData>(x.Result.GetRawJsonValue());

@@ -8,6 +8,7 @@ namespace Scriptable_Objects
         public int playerId;
         public string playerName, gameId;
         public int playersCount;
+        public int lastHandCount;
         public bool isHost;
         public CardSheet[] cardsInGame;
         public GameObject cardPrefab;

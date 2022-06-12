@@ -24,13 +24,15 @@ public class GameManager : MonoBehaviour
     private CardsFactory _cardsFactory;
     private IPlayerService _playerService;
     private IGameService _gameService;
+    private BetsController _betsController;
     private Configuration _configuration;
     
     [Inject]
     public void Construct(Configuration configuration, ITurnsService turnsService, HandsController handsController, 
         CenterDeckController centerDeckController, ISessionService sessionService, IGameService gameService,
-       IPlayerService playerService, IDeckService deckService, CardsFactory cardsFactory)
+       IPlayerService playerService, IDeckService deckService, CardsFactory cardsFactory, BetsController betsController)
     {
+        _betsController = betsController;
         _configuration = configuration;
         _turnsService = turnsService;
         _handsController = handsController;
@@ -68,11 +70,12 @@ public class GameManager : MonoBehaviour
             await FakeDelay();
             foreach (var player in players)
             {
-                var cards = _centerDeckController.GetCards(3);
+                var cards = _centerDeckController.GetCards(1);
+                _configuration.lastHandCount = 1;
                 _handsController.CreateHand(player.id, cards);
             }
 
-            _gameService.SetHostReady();
+            _gameService.SetHostReady(true);
         }
 
         await WaitForHost();
@@ -83,6 +86,8 @@ public class GameManager : MonoBehaviour
         }
 
         _handsController.CreateHand(_configuration.playerId, _handsController.GetHand(_configuration.playerId));
+        
+        _betsController.ShowUI();
     }
 
     private async UniTask FakeDelay()
@@ -122,7 +127,7 @@ public class GameManager : MonoBehaviour
 
         if (playerId == -1)
         {
-            _sessionService.GetSessionWinnerId();
+            _sessionService.AnnounceSessionWinnerId();
             _sessionService.ClearCards();
             var players = _playerService.GetAllPlayers().ToArray();
             _turnsService.SetTurnsOrder(new Queue<int>(players.Select(x=>x.id)));
@@ -151,7 +156,7 @@ public class GameManager : MonoBehaviour
 
         var deck = _deckService.GetPlayerDeck(playerId);
         _deckService.ClearPlayerDeck(playerId);
-        _cardsFactory.CreateCard(deck.selectedMapPoint, card);
+        _cardsFactory.CreateCard(deck.selectedMapPoint, card, playerId);
         _handsController.CreateHand(playerId, newHand.Select(x=>x));
         _sessionService.AddCardToSession(playerId, card);
         _turnsService.NextTurn();

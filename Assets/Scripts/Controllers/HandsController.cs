@@ -34,7 +34,7 @@ namespace Controllers
             _deckService.ClearPlayerDeck(playerId);
             
             var hand = cards
-                .Select(cardSheet => _cardsFactory.CreateCard(deck.hand, cardSheet))
+                .Select(cardSheet => _cardsFactory.CreateCard(deck.hand, cardSheet, playerId))
                 .ToList();
 
             deck.SetCards(hand.ToArray());
@@ -51,7 +51,7 @@ namespace Controllers
             {
                 var random = Random.Range(0, _configuration.cardsInGame.Length);
                 var cardSheet = _configuration.cardsInGame[random];
-                var card = _cardsFactory.CreateCard(deck.hand, cardSheet);
+                var card = _cardsFactory.CreateCard(deck.hand, cardSheet, playerId);
                 hand.Add(card);
             }
             

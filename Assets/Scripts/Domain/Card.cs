@@ -16,10 +16,12 @@ namespace Domain
         private GameController _gameController;
         private ITurnsService _turnsService;
         private IPlayerService _playerService;
+        private int _ownerId;
 
         [Inject]
-        public void Construct(GameController gameController, ITurnsService turnsService, IPlayerService playerService)
+        public void Construct(int ownerId, GameController gameController, ITurnsService turnsService, IPlayerService playerService)
         {
+            _ownerId = ownerId;
             _turnsService = turnsService;
             _gameController = gameController;
             _playerService = playerService;
@@ -33,9 +35,10 @@ namespace Domain
         private void OnMouseDown()
         {
             Debug.Log($"Click on the card, card name: '{cardSheet.cardName}'");
+            if(EventSystem.current.IsPointerOverGameObject()) return;
             var currentTurn = _turnsService.CurrentTurn();
             var localPlayerId = _playerService.LocalPlayerId;
-            if (currentTurn != localPlayerId)
+            if (currentTurn != localPlayerId || currentTurn != _ownerId)
             {
                 return;
             }

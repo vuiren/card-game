@@ -35,7 +35,7 @@ namespace Controllers
             {
                 var deck = _deckService.GetPlayerDeck(sessionPlayer.playerId);
                 var card = _configuration.cardsInGame.FirstOrDefault(x => x.cardId == sessionPlayer.playedCardId);
-                _cardsFactory.CreateCard(deck.selectedMapPoint, card);
+                _cardsFactory.CreateCard(deck.selectedMapPoint, card, sessionPlayer.playerId);
             }
         }
     }

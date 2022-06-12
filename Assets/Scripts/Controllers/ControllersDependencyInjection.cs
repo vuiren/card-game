@@ -27,6 +27,13 @@ namespace Controllers
                 Debug.LogError("No gameController found");
             }
             container.BindInstance(gameController).AsSingle();
+            
+            var betsController = Object.FindObjectOfType<BetsController>();
+            if (!betsController)
+            {
+                Debug.LogError("No betsController found");
+            }
+            container.BindInstance(betsController).AsSingle();
         }
     }
 }

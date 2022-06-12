@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Domain;
 using Domain.DTO;
 using Firebase.Database;
@@ -36,7 +37,7 @@ namespace Infrastructure
             _onTurnChanged?.Invoke(_currentTurn);
         }
 
-        public void SetTurnsOrder(Queue<int> players)
+        public async void SetTurnsOrder(Queue<int> players)
         {
             var gameData = new GameData();
             var orderString = ArrayMethods.TurnArrayToString(players);
@@ -47,8 +48,7 @@ namespace Infrastructure
             
             var jsonData = JsonUtility.ToJson(gameData);
 
-            _gameRef.SetRawJsonValueAsync(jsonData);
-            
+            await _gameRef.SetRawJsonValueAsync(jsonData);
         }
 
         public async void NextTurn()

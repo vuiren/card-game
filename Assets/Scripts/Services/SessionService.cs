@@ -12,10 +12,11 @@ namespace Services
     public interface ISessionService
     {
         void AddCardToSession(int playerId, CardSheet cardSheet);
-        int GetSessionWinnerId();
+        void AnnounceSessionWinnerId();
         List<SessionPlayer> GetCardsInSession();
         void ClearCards();
         void OnCardAddedToSession(Action<List<SessionPlayer>> cards);
+        void OnSessionWinnerAnnounced(Action<int> action);
     }
     
     public class SessionService : ISessionService
@@ -33,6 +34,11 @@ namespace Services
         public void AddCardToSession(int playerId, CardSheet cardSheet)
         {
             _cardsInSession.Add(new Mono.CSharp.Tuple<int, CardSheet>(playerId, cardSheet));
+        }
+
+        public void AnnounceSessionWinnerId()
+        {
+            throw new NotImplementedException();
         }
 
         public int GetSessionWinnerId()
@@ -60,6 +66,11 @@ namespace Services
         }
 
         public void OnCardAddedToSession(Action<List<SessionPlayer>> cards)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnSessionWinnerAnnounced(Action<int> action)
         {
             throw new NotImplementedException();
         }
