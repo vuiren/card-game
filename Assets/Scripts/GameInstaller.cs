@@ -11,7 +11,7 @@ public class GameInstaller : MonoInstaller
     public override void InstallBindings()
     {
         Container.BindInstance(configuration).AsSingle();
-        ServicesDependencyInjection.Inject(Container);
+        ServicesDependencyInjection.Inject(configuration, Container);
         ControllersDependencyInjection.Inject(Container);
         FactoriesDependencyInjection.Inject(Container);
     }

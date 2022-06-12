@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Game_Code.Domain
+namespace Domain
 {
     [RequireComponent(typeof(Actor))]
     public class Player : MonoBehaviour

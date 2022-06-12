@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Domain;
-using Game_Code.Domain;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,10 +8,10 @@ namespace Services
 {
     public interface IDeckService
     {
-        void AssignDeckToPlayer(Player player);
-        PlayerDeck GetPlayerDeck(Player player);
-        void SetDeck(int deckId, Card[] cards);
-        void ClearDeck(int deckId);
+        void AssignDeckToPlayer(int playerId);
+        void AssignMainDeckToPlayer(int playerId);
+        PlayerDeck GetPlayerDeck(int playerId);
+        void ClearPlayerDeck(int playerId);
     }
     
     public class DeckService: IDeckService
@@ -29,36 +28,36 @@ namespace Services
             _decks = new Queue<PlayerDeck>(playerDecks);    
         }
         
-        public void AssignDeckToPlayer(Player player)
+        public void AssignDeckToPlayer(int playerId)
         {
-            if (_playerDecks.ContainsKey(player.actor.id))
+            if (_playerDecks.ContainsKey(playerId))
             {
-                Debug.LogWarning($"Deck for player: '{player.actor.id}' is already assigned");
+                Debug.LogWarning($"Deck for player: '{playerId}' is already assigned");
                 return;
             }
             
-            _playerDecks.Add(player.actor.id, _decks.Dequeue());
+            _playerDecks.Add(playerId, _decks.Dequeue());
         }
 
-        public PlayerDeck GetPlayerDeck(Player player)
+        public void AssignMainDeckToPlayer(int playerId)
         {
-            if (!_playerDecks.ContainsKey(player.actor.id))
+            
+        }
+
+        public PlayerDeck GetPlayerDeck(int playerId)
+        {
+            if (!_playerDecks.ContainsKey(playerId))
             {
-                Debug.LogWarning($"Player '{player.actor.id}' got no deck assigned");
+                Debug.LogWarning($"Player '{playerId}' got no deck assigned");
                 return null;
             }
 
-            return _playerDecks[player.actor.id];
+            return _playerDecks[playerId];
         }
 
-        public void SetDeck(int deckId, Card[] cards)
+        public void ClearPlayerDeck(int deckId)
         {
-            var deck = _allDecks.FirstOrDefault(x => x.actor.id == deckId);
-        }
-
-        public void ClearDeck(int deckId)
-        {
-            var deck = _allDecks.FirstOrDefault(x => x.actor.id == deckId).hand;
+            var deck = _allDecks.FirstOrDefault(x => x.actor.id == deckId)?.hand;
 
             if (!deck)
             {

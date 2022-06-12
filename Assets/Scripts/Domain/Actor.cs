@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Game_Code
+namespace Domain
 {
     public class Actor : MonoBehaviour
     {

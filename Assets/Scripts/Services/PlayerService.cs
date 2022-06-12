@@ -1,36 +1,40 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Game_Code.Domain;
+using Domain;
+using Domain.DTO;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Services
 {
     public interface IPlayerService
     {
-        void RegisterPlayer(Player player);
-        Player GetPlayer(int id);
-        IEnumerable<Player> GetAllPlayers();
-        Player CurrentPlayer { get; set; }
+        void RegisterPlayer(int id);
+        PlayerData GetPlayer(int id);
+        IEnumerable<PlayerData> GetAllPlayers();
+        int LocalPlayerId { get; }
+        void OnPlayerListChanged(Action<List<PlayerData>> players);
     }
     
     public class PlayerService: IPlayerService
     {
-        private readonly Dictionary<int, Player> _players = new();
+        private readonly Dictionary<int, PlayerData> _players = new();
         
-        public void RegisterPlayer(Player player)
+        public void RegisterPlayer(int id)
         {
-            Debug.Log($"Registering player {player}");
-            if (_players.ContainsKey(player.actor.id))
+            Debug.Log($"Registering player {id}");
+            if (_players.ContainsKey(id))
             {
-                Debug.LogWarning($"Player with id: '{player.actor.id}' already registered");
+                Debug.LogWarning($"Player with id: '{id}' already registered");
                 return;
             }
 
-            _players.Add(player.actor.id, player);
+            _players.Add(id, new PlayerData(){id = id});
         }
 
-        public Player GetPlayer(int id)
+        public PlayerData GetPlayer(int id)
         {
             if (_players.ContainsKey(id))
             {
@@ -42,11 +46,15 @@ namespace Services
             return null;
         }
 
-        public IEnumerable<Player> GetAllPlayers()
+        public IEnumerable<PlayerData> GetAllPlayers()
         {
             return _players.Values.ToArray();
         }
 
-        public Player CurrentPlayer { get; set; }
+        public int LocalPlayerId { get; }
+        public void OnPlayerListChanged(Action<List<PlayerData>> players)
+        {
+            
+        }
     }
 }

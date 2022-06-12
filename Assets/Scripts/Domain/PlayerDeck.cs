@@ -1,5 +1,4 @@
 ﻿using System;
-using Game_Code;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -8,6 +7,7 @@ namespace Domain
     [RequireComponent(typeof(Actor))]
     public class PlayerDeck : MonoBehaviour
     {
+        public bool mainDeck;
         public Actor actor;
         public Transform hand, selectedMapPoint;
         [SerializeField] private float gapBetweenCards;

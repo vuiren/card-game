@@ -34,12 +34,12 @@ namespace Domain
         {
             Debug.Log($"Click on the card, card name: '{cardSheet.cardName}'");
             var currentTurn = _turnsService.CurrentTurn();
-            var player = _playerService.CurrentPlayer;
-            if (currentTurn.actor.id != player.actor.id)
+            var localPlayerId = _playerService.LocalPlayerId;
+            if (currentTurn != localPlayerId)
             {
                 return;
             }
-            _gameController.MakeAStep(player, this);
+            _gameController.MakeAStep(localPlayerId, cardSheet);
         }
     }
 }

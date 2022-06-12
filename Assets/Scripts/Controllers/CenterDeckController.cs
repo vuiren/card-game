@@ -37,7 +37,14 @@ namespace Controllers
             _centerDeckService.SetCards(_cardsInGame);
             var card = GetCards(1)[0];
             var cardInstance = _cardsFactory.CreateCard(_centerDeck.trumpCardRoot, card);
-            _centerDeckService.TrumpCard = cardInstance.GetComponent<Card>();
+            _centerDeckService.SetTrumpCard(cardInstance.GetComponent<Card>().cardSheet.cardId);
+        }
+
+        public void SyncCenterDeck()
+        {
+            var card = _centerDeckService.GetTrumpCard();
+            var cardInstance = _cardsFactory.CreateCard(_centerDeck.trumpCardRoot, card);
+            _centerDeckService.SetTrumpCard(cardInstance.GetComponent<Card>().cardSheet.cardId);
         }
 
         public CardSheet[] GetCards(int cardsCount)

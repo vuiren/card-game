@@ -8,7 +8,8 @@ namespace Services
 {
     public interface ICenterDeckService
     {
-        Card TrumpCard { get; set; }
+        void SetTrumpCard(int trumpCardId);
+        CardSheet GetTrumpCard();
         CardSheet[] GetCards(int cardsCount);
         void SetCards(IEnumerable<CardSheet> cardSheets);
         CardSheet[] GetAllCardsInCenter();
@@ -19,6 +20,16 @@ namespace Services
         private List<CardSheet> _cardsInCenter;
 
         public Card TrumpCard { get; set; }
+        public void SetTrumpCard(int trumpCardId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public CardSheet GetTrumpCard()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public CardSheet[] GetCards(int cardsCount)
         {
             var cards = new List<CardSheet>(_cardsInCenter.Take(cardsCount));

@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Domain;
 using Factories;
-using Game_Code.Domain;
+using Scriptable_Objects;
 using Services;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 
@@ -10,26 +13,57 @@ namespace Controllers
 {
     public class GameController : MonoBehaviour
     {
+        [SerializeField] private TextMeshProUGUI statusText;
         private CardsFactory _cardsFactory;
         private IDeckService _deckService;
         private HandsController _handsController;
         private ISessionService _sessionService;
         private ITurnsService _turnsService;
+        private IPlayerService _playerService;
 
         [Inject]
-        public void Construct(CardsFactory cardsFactory, IDeckService deckService,HandsController handsController, ISessionService sessionService,
-            ITurnsService turnsService )
+        public void Construct(CardsFactory cardsFactory, IDeckService deckService,HandsController handsController, 
+            ISessionService sessionService, ITurnsService turnsService, IPlayerService playerService )
         {
+            _playerService = playerService;
             _cardsFactory = cardsFactory;
             _deckService = deckService;
             _handsController = handsController;
             _sessionService = sessionService;
             _turnsService = turnsService;
+            _turnsService.OnTurnChange(CheckIfWinCheck);
         }
-        
-        public void MakeAStep(Player player, Card card)
+
+        private void CheckIfWinCheck(int obj)
         {
-            var hand = _handsController.GetHand(player).ToArray();
+            if (obj == -1)
+            {
+                var sessionWinnerId = _sessionService.GetSessionWinnerId();
+
+                _sessionService.ClearCards();
+                var players = _playerService.GetAllPlayers().ToArray();
+
+                var winner = players.FirstOrDefault(x => x.id == sessionWinnerId);
+                statusText.text = $"Игрок: {winner.name} победил!";
+                
+                _turnsService.SetTurnsOrder(new Queue<int>(players.Select(x=>x.id)));
+
+                foreach (var player1 in players)
+                {
+                    var playerDeck = _deckService.GetPlayerDeck(player1.id);
+
+                    for (int i = 0; i < playerDeck.selectedMapPoint.childCount; i++)
+                    {
+                        var child = playerDeck.selectedMapPoint.GetChild(i);
+                        Destroy(child.GameObject());
+                    }
+                }
+            }
+        }
+
+        public void MakeAStep(int playerId, CardSheet card)
+        {
+            var hand = _handsController.GetHand(playerId).ToArray();
             Debug.Log($"Hand: {hand}");
         
             var newHand = hand.ToList();
@@ -37,11 +71,11 @@ namespace Controllers
         
             Debug.Log($"New hand: {newHand}");
 
-            var deck = _deckService.GetPlayerDeck(player);
-            _deckService.ClearDeck(_deckService.GetPlayerDeck(player).actor.id);
-            _cardsFactory.CreateCard(deck.selectedMapPoint, card.cardSheet);
-            _handsController.SetHand(player, newHand.Select(x=>x.cardSheet));
-            _sessionService.AddCardToSession(player.actor.id, card.cardSheet);
+            var deck = _deckService.GetPlayerDeck(playerId);
+            _deckService.ClearPlayerDeck(playerId);
+            _cardsFactory.CreateCard(deck.selectedMapPoint, card);
+            _handsController.CreateHand(playerId, newHand.Select(x=>x));
+            _sessionService.AddCardToSession(playerId, card);
             _turnsService.NextTurn();
         }
     }

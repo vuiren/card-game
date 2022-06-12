@@ -3,7 +3,6 @@ using System.Linq;
 using Domain;
 using Extensions;
 using Factories;
-using Game_Code.Domain;
 using Scriptable_Objects;
 using Services;
 using UnityEngine;
@@ -14,7 +13,6 @@ namespace Controllers
 {
     public class HandsController : MonoBehaviour
     {
-        [SerializeField] private GameObject cardPrefab;
         private Configuration _configuration;
         private IHandsService _handsService;
         private CardsFactory _cardsFactory;
@@ -30,10 +28,10 @@ namespace Controllers
             _deckService = deckService;
         }
 
-        public void SetHand(Player player, IEnumerable<CardSheet> cards)
+        public void CreateHand(int playerId, IEnumerable<CardSheet> cards)
         {
-            var deck = _deckService.GetPlayerDeck(player);
-            _deckService.ClearDeck(deck.actor.id);
+            var deck = _deckService.GetPlayerDeck(playerId);
+            _deckService.ClearPlayerDeck(playerId);
             
             var hand = cards
                 .Select(cardSheet => _cardsFactory.CreateCard(deck.hand, cardSheet))
@@ -41,13 +39,13 @@ namespace Controllers
 
             deck.SetCards(hand.ToArray());
             deck.StructureHand();
-            _handsService.SetHand(player, hand);
+            _handsService.SetHand(playerId, hand.Select(x=>x.cardSheet));
         }
         
-        public void SetRandomHandForPlayer(Player player, int cardsCount)
+        public void SetRandomHandForPlayer(int playerId, int cardsCount)
         {
             var hand = new List<Card>();
-            var deck = _deckService.GetPlayerDeck(player);
+            var deck = _deckService.GetPlayerDeck(playerId);
             
             for (var i = 0; i < cardsCount; i++)
             {
@@ -58,12 +56,12 @@ namespace Controllers
             }
             
             deck.StructureHand();
-            _handsService.SetHand(player, hand);
+            _handsService.SetHand(playerId, hand.Select(x=>x.cardSheet));
         }
 
-        public IEnumerable<Card> GetHand(Player player)
+        public IEnumerable<CardSheet> GetHand(int playerId)
         {
-            return _handsService.GetHand(player);
+            return _handsService.GetHand(playerId);
         }
     }
 }

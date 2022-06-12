@@ -9,27 +9,18 @@ namespace CLI
     public class PlayerCommands : MonoBehaviour
     {
         private IPlayerService _playerService;
-        private PlayersController _playersController;
 
         [Inject]
-        public void Construct(IPlayerService playerService, PlayersController playersController)
+        public void Construct(IPlayerService playerService)
         {
             _playerService = playerService;
-            _playersController = playersController;
-        }
-
-        [Command("player.create")]
-        public void CreatePlayer()
-        {
-            _playersController.CreatePlayer();
-            Debug.Log("Player created");
         }
 
         [Command("players.getPlayer")]
         public void GetPlayer(int id)
         {
             var player = _playerService.GetPlayer(id);
-            if(!player) return;
+            if(player == null) return;
             
             Debug.Log($"Player found: '{player}'");
         }

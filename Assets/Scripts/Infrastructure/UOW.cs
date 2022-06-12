@@ -13,7 +13,7 @@ namespace Infrastructure
             _database = database;
         }*/
 
-        public void SaveData()
+        public void SaveDataToDatabase()
         {
 
         }

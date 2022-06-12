@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Domain;
-using Game_Code.Domain;
+using Scriptable_Objects;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,27 +9,37 @@ namespace Services
 {
     public interface IHandsService
     {
-        void SetHand(Player player, IEnumerable<Card> cards);
-        void RemoveFromHand(Player player, Card card);
-        IEnumerable<Card> GetHand(Player player);
+        void SetHand(int playerId, IEnumerable<CardSheet> cards);
+        void RemoveFromHand(int playerId, int cardId);
+        IEnumerable<CardSheet> GetHand(int playerId);
     }
 
     public class HandsService : IHandsService
     {
         private readonly Dictionary<int, List<Card>> _hands = new();
 
-        public void SetHand(Player player, IEnumerable<Card> cards)
+        public void SetHand(int playerId, IEnumerable<Card> cards)
         {
-            if (_hands.ContainsKey(player.actor.id))
+            if (_hands.ContainsKey(playerId))
             {
-                _hands[player.actor.id] = cards.ToList();
+                _hands[playerId] = cards.ToList();
             }
             else
             {
-                _hands.Add(player.actor.id, cards.ToList());
+                _hands.Add(playerId, cards.ToList());
             }
 
             Debug.Log("Hand set");
+        }
+
+        public void SetHand(int playerId, IEnumerable<CardSheet> cards)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveFromHand(int playerId, int cardId)
+        {
+            throw new System.NotImplementedException();
         }
 
         public void RemoveFromHand(Player player, Card card)
@@ -43,9 +53,14 @@ namespace Services
             }
         }
 
-        public IEnumerable<Card> GetHand(Player player)
+        IEnumerable<CardSheet> IHandsService.GetHand(int playerId)
         {
-            return _hands.ContainsKey(player.actor.id) ? _hands[player.actor.id].ToArray() : null;
+            throw new System.NotImplementedException();
+        }
+
+        public IEnumerable<Card> GetHand(int playerId)
+        {
+            return _hands.ContainsKey(playerId) ? _hands[playerId].ToArray() : null;
         }
     }
 }

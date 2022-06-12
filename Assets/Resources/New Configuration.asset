@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f437c98fddc14fe8bab6950cd96d4ab3, type: 3}
   m_Name: New Configuration
   m_EditorClassIdentifier: 
+  playerId: 0
+  playerName: dsa
+  gameId: aew
+  playersCount: 2
+  isHost: 1
   cardsInGame:
   - {fileID: 11400000, guid: 9a3e3de52a257d24caf3cdf092765438, type: 2}
   - {fileID: 11400000, guid: 3fff7251f93aaec4cb4f06c7d3c225e1, type: 2}

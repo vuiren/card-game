@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Game_Code.Domain;
+using Domain;
 using UnityEngine;
 
 namespace Services

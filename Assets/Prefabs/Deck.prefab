@@ -48,7 +48,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81a98ac3b6f9469eac46f7e92787077d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actor: {fileID: 0}
+  mainDeck: 0
+  actor: {fileID: 5789646444094629666}
   hand: {fileID: 7514775971162250005}
   selectedMapPoint: {fileID: 853690414593636293}
   gapBetweenCards: 2

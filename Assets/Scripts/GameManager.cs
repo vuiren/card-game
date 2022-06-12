@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Controllers;
+using Cysharp.Threading.Tasks;
 using Domain;
 using Factories;
-using Game_Code.Domain;
 using Scriptable_Objects;
 using Services;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
@@ -13,48 +15,97 @@ using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
-    private PlayersController _playersController;
+    [SerializeField] private TextMeshProUGUI statusText;
     private ITurnsService _turnsService;
     private HandsController _handsController;
     private CenterDeckController _centerDeckController;
     private ISessionService _sessionService;
     private IDeckService _deckService;
     private CardsFactory _cardsFactory;
+    private IPlayerService _playerService;
+    private IGameService _gameService;
+    private Configuration _configuration;
     
     [Inject]
-    public void Construct(ITurnsService turnsService, HandsController handsController, 
-        CenterDeckController centerDeckController, PlayersController playersController, 
-        ISessionService sessionService, IDeckService deckService, CardsFactory cardsFactory)
+    public void Construct(Configuration configuration, ITurnsService turnsService, HandsController handsController, 
+        CenterDeckController centerDeckController, ISessionService sessionService, IGameService gameService,
+       IPlayerService playerService, IDeckService deckService, CardsFactory cardsFactory)
     {
-        _playersController = playersController;
+        _configuration = configuration;
         _turnsService = turnsService;
         _handsController = handsController;
         _centerDeckController = centerDeckController;
         _sessionService = sessionService;
         _deckService = deckService;
         _cardsFactory = cardsFactory;
+        _playerService = playerService;
+        _gameService = gameService;
     }
 
-    private void Start()
+    private async void Start()
     {
-        _playersController.CreatePlayer(true);
-        _playersController.CreatePlayer();
-        _playersController.CreatePlayer();
-        _playersController.CreatePlayer();
-
-        var players = _playersController.GetAllPlayers().ToArray();
-        _turnsService.SetTurnsOrder(new Queue<Player>(players));
-
-        _centerDeckController.CreateCenterDeck();
+        statusText.text = "Waiting for players";
+        await WaitForAllPlayers();
+       // statusText.text = "Game Started";
+        var players = _playerService.GetAllPlayers().ToArray();
         
         foreach (var player in players)
         {
-            var cards = _centerDeckController.GetCards(3);
-            _deckService.AssignDeckToPlayer(player);
-            _handsController.SetHand(player, cards);
+            if (player.id == _configuration.playerId)
+            {
+                _deckService.AssignMainDeckToPlayer(player.id);
+            }
+            else
+            {
+                _deckService.AssignDeckToPlayer(player.id);
+            }
         }
-        
-        _turnsService.NextTurn();
+
+        if (_configuration.isHost)
+        {
+            _turnsService.SetTurnsOrder(new Queue<int>(players.Select(x => x.id)));
+            _centerDeckController.CreateCenterDeck();
+            await FakeDelay();
+            foreach (var player in players)
+            {
+                var cards = _centerDeckController.GetCards(3);
+                _handsController.CreateHand(player.id, cards);
+            }
+
+            _gameService.SetHostReady();
+        }
+
+        await WaitForHost();
+
+        if (!_configuration.isHost)
+        {
+            _centerDeckController.SyncCenterDeck();
+        }
+
+        _handsController.CreateHand(_configuration.playerId, _handsController.GetHand(_configuration.playerId));
+    }
+
+    private async UniTask FakeDelay()
+    {
+        await UniTask.Delay(1000);
+    }
+
+    private async UniTask WaitForHost()
+    {
+        while (!_gameService.IsHostReady())
+        {
+            statusText.text = "Waiting for host";
+            await UniTask.Delay(1000);
+        }
+    }
+
+    private async UniTask WaitForAllPlayers()
+    {
+        while (_playerService.GetAllPlayers().Count() < _configuration.playersCount)
+        {
+            await UniTask.Delay(1000);
+            statusText.text = $"Waiting for players: {_playerService.GetAllPlayers().Count()}/{_configuration.playersCount}";
+        }
     }
 
     private void Update()
@@ -67,19 +118,18 @@ public class GameManager : MonoBehaviour
 
     private void MakeAStep()
     {
-        var player = _turnsService.CurrentTurn();
+        var playerId = _turnsService.CurrentTurn();
 
-        if (!player)
+        if (playerId == -1)
         {
-            _sessionService.GetSessionWinner();
+            _sessionService.GetSessionWinnerId();
             _sessionService.ClearCards();
-            var players = _playersController.GetAllPlayers();
-            _turnsService.SetTurnsOrder(new Queue<Player>(players));
-            _turnsService.NextTurn();
+            var players = _playerService.GetAllPlayers().ToArray();
+            _turnsService.SetTurnsOrder(new Queue<int>(players.Select(x=>x.id)));
 
             foreach (var player1 in players)
             {
-                var playerDeck = _deckService.GetPlayerDeck(player1);
+                var playerDeck = _deckService.GetPlayerDeck(player1.id);
 
                 for (int i = 0; i < playerDeck.selectedMapPoint.childCount; i++)
                 {
@@ -89,8 +139,8 @@ public class GameManager : MonoBehaviour
             }
             return;
         }
-        
-        var hand = _handsController.GetHand(player).ToArray();
+
+        var hand = _handsController.GetHand(playerId).ToArray();
         Debug.Log($"Hand: {hand}");
         
         var card = hand[Random.Range(0, hand.Length)];
@@ -99,11 +149,11 @@ public class GameManager : MonoBehaviour
         
         Debug.Log($"New hand: {newHand}");
 
-        var deck = _deckService.GetPlayerDeck(player);
-        _deckService.ClearDeck(_deckService.GetPlayerDeck(player).actor.id);
-        _cardsFactory.CreateCard(deck.selectedMapPoint, card.cardSheet);
-        _handsController.SetHand(player, newHand.Select(x=>x.cardSheet));
-        _sessionService.AddCardToSession(player.actor.id, card.cardSheet);
+        var deck = _deckService.GetPlayerDeck(playerId);
+        _deckService.ClearPlayerDeck(playerId);
+        _cardsFactory.CreateCard(deck.selectedMapPoint, card);
+        _handsController.CreateHand(playerId, newHand.Select(x=>x));
+        _sessionService.AddCardToSession(playerId, card);
         _turnsService.NextTurn();
     }
     

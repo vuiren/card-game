@@ -22,17 +22,17 @@ namespace CLI
 
             foreach (var card in cards)
             {
-                Debug.Log($"Player: '{card.Item1}' with a card: '{card.Item2}'");
+                Debug.Log($"Player: '{card.playerId}' with a card: '{card.playedCardId}'");
             }
         }
 
         [Command("sessions.getWinner")]
         public void GetWinner()
         {
-            var winner = _sessionService.GetSessionWinner();
+            var winner = _sessionService.GetSessionWinnerId();
             var cards = _sessionService.GetCardsInSession();
-            var card = cards.FirstOrDefault(x => x.Item1 == winner);
-            Debug.Log($"Player: '{winner}' won with '{card.Item2}'");
+            var card = cards.FirstOrDefault(x => x.playerId == winner);
+            Debug.Log($"Player: '{winner}' won with '{card.playedCardId}'");
         }
     }
 }

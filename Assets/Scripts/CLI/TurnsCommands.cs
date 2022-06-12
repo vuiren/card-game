@@ -23,5 +23,13 @@ namespace CLI
             
             Debug.Log($"Current turn: '{current}'");
         }
+
+        [Command("turns.next")]
+        public void NextTurn()
+        {
+            _turnsService.NextTurn();
+            
+            CurrentTurn();
+        }
     }
 }

@@ -21,7 +21,7 @@ namespace CLI
         [Command("cards.trumpCard")]
         public void PrintTrumpCard()
         {
-            Debug.Log($"Trump card: '{_centerDeckService.TrumpCard.cardSheet.cardName}'");
+            Debug.Log($"Trump card: '{_centerDeckService.GetTrumpCard().cardName}'");
         }
 
         [Command("cards.countCardsInCenter")]

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Scriptable_Objects
@@ -10,6 +11,7 @@ namespace Scriptable_Objects
         Clubs,
     }
     
+    [Serializable]
     [CreateAssetMenu(fileName = "New Card", menuName = "Add Card")]
     public class CardSheet : ScriptableObject
     {
