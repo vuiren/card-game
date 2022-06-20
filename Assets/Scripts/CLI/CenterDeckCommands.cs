@@ -10,7 +10,7 @@ namespace CLI
     {
         private CenterDeckController _centerDeckController;
         private ICenterDeckService _centerDeckService;
-        
+
         [Inject]
         public void Construct(CenterDeckController centerDeckController, ICenterDeckService centerDeckService)
         {
@@ -29,11 +29,8 @@ namespace CLI
         {
             var cards = _centerDeckService.GetAllCardsInCenter();
 
-            foreach (var cardSheet in cards)
-            {
-                Debug.Log($"Card: '{cardSheet.cardName}'");
-            }
-            
+            foreach (var cardSheet in cards) Debug.Log($"Card: '{cardSheet.cardName}'");
+
             Debug.Log($"{cards.Length} карт в центре");
         }
     }

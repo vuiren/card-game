@@ -16,7 +16,17 @@ MonoBehaviour:
   playerName: dsa
   gameId: aew
   playersCount: 3
+  lastHandCount: 0
   isHost: 1
+  BackgroundSuits:
+  - cardSuit: 1
+    backgroundPrefab: {fileID: 5161563342650249385, guid: c7b38fe7424d34149a4258c260116813, type: 3}
+  - cardSuit: 0
+    backgroundPrefab: {fileID: 7399219223436791027, guid: 91ad92f34f556e640a3f7415d0ae10c9, type: 3}
+  - cardSuit: 2
+    backgroundPrefab: {fileID: 3321662710107856915, guid: 1522cc00c5acb364a9f923c93fed3821, type: 3}
+  - cardSuit: 3
+    backgroundPrefab: {fileID: 2242546528709800786, guid: f1c762072c5b7d14684446fdd3b1dc81, type: 3}
   cardsInGame:
   - {fileID: 11400000, guid: 9a3e3de52a257d24caf3cdf092765438, type: 2}
   - {fileID: 11400000, guid: 3fff7251f93aaec4cb4f06c7d3c225e1, type: 2}

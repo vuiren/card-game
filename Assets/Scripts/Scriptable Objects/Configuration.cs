@@ -10,6 +10,7 @@ namespace Scriptable_Objects
         public int playersCount;
         public int lastHandCount;
         public bool isHost;
+        public BackgroundSuit[] BackgroundSuits;
         public CardSheet[] cardsInGame;
         public GameObject cardPrefab;
     }

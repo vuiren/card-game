@@ -8,9 +8,9 @@ namespace Scriptable_Objects
         Spades,
         Hearts,
         Diamonds,
-        Clubs,
+        Clubs
     }
-    
+
     [Serializable]
     [CreateAssetMenu(fileName = "New Card", menuName = "Add Card")]
     public class CardSheet : ScriptableObject

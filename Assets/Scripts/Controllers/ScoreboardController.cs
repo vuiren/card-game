@@ -11,7 +11,7 @@ namespace Controllers
         [SerializeField] private TextMeshProUGUI scoreboardText;
         private IPlayerService _playerService;
         private IScoreService _scoreService;
-        
+
         [Inject]
         public void Construct(IScoreService scoreService, ISessionService sessionService, IPlayerService playerService)
         {

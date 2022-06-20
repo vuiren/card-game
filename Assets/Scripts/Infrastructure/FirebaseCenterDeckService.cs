@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Domain;
 using Domain.DTO;
 using Extensions;
 using Firebase.Database;
@@ -11,32 +10,19 @@ using Util;
 
 namespace Infrastructure
 {
-    public class FirebaseCenterDeckService: ICenterDeckService
+    public class FirebaseCenterDeckService : ICenterDeckService
     {
-        private readonly Configuration _configuration;
         private readonly DatabaseReference _centerDeckReference;
-        private int _trumpCardId;
+        private readonly Configuration _configuration;
         private int[] _cardsInCenter;
-        
+        private int _trumpCardId;
+
         public FirebaseCenterDeckService(Configuration configuration)
         {
             _configuration = configuration;
             _centerDeckReference = FirebaseDatabase.DefaultInstance.RootReference.Child(_configuration.gameId)
                 .Child("centerDeck");
-            _centerDeckReference.ValueChanged += HandleValueChange;    
-        }
-
-        private void HandleValueChange(object sender, ValueChangedEventArgs e)
-        {
-            if(e.Snapshot?.Value == null) return;
-
-            var value = JsonUtility.FromJson<CenterDeckData>(e.Snapshot.GetRawJsonValue());
-            _trumpCardId = value.trumpCardId;
-
-            var cards = value.cardsInGame.Split(',');
-            cards = cards.Where(x => x.Length > 0).ToArray();
-
-            _cardsInCenter = cards.Select(int.Parse).ToArray();
+            _centerDeckReference.ValueChanged += HandleValueChange;
         }
 
         public void SetTrumpCard(int trumpCardId)
@@ -62,8 +48,8 @@ namespace Infrastructure
             var result = _configuration.cardsInGame.Where(x => cards.Contains(x.cardId));
 
             _cardsInCenter = _cardsInCenter.Skip(cardsCount).Take(_cardsInCenter.Length - cardsCount - 1).ToArray();
-            SetCards(_configuration.cardsInGame.Where(x=> _cardsInCenter.Contains(x.cardId)));
-            
+            SetCards(_configuration.cardsInGame.Where(x => _cardsInCenter.Contains(x.cardId)));
+
             return result.ToArray();
         }
 
@@ -74,10 +60,10 @@ namespace Infrastructure
             _cardsInCenter.Shuffle();
             var cardsInGame = ArrayMethods.TurnArrayToString(_cardsInCenter);
 
-            var centerDeckData = new CenterDeckData()
+            var centerDeckData = new CenterDeckData
             {
                 trumpCardId = _trumpCardId,
-                cardsInGame = cardsInGame,
+                cardsInGame = cardsInGame
             };
 
             _centerDeckReference.SetRawJsonValueAsync(JsonUtility.ToJson(centerDeckData));
@@ -86,6 +72,19 @@ namespace Infrastructure
         public CardSheet[] GetAllCardsInCenter()
         {
             return _configuration.cardsInGame;
+        }
+
+        private void HandleValueChange(object sender, ValueChangedEventArgs e)
+        {
+            if (e.Snapshot?.Value == null) return;
+
+            var value = JsonUtility.FromJson<CenterDeckData>(e.Snapshot.GetRawJsonValue());
+            _trumpCardId = value.trumpCardId;
+
+            var cards = value.cardsInGame.Split(',');
+            cards = cards.Where(x => x.Length > 0).ToArray();
+
+            _cardsInCenter = cards.Select(int.Parse).ToArray();
         }
     }
 }

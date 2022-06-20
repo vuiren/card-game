@@ -1,5 +1,4 @@
-﻿using System;
-using Unity.VisualScripting;
+﻿using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Domain
@@ -15,6 +14,7 @@ namespace Domain
         [SerializeField] private bool cardsHidden;
 
         private Card[] _cards;
+
         private void Awake()
         {
             if (cardsHidden)
@@ -22,6 +22,7 @@ namespace Domain
                 hiddenCardRoot.GameObject().SetActive(true);
                 hand.gameObject.SetActive(false);
             }
+
             actor = GetComponent<Actor>();
         }
 
@@ -32,7 +33,7 @@ namespace Domain
 
         public void StructureHand()
         {
-            var firstX =- _cards.Length / gapBetweenCards;
+            var firstX = -_cards.Length / gapBetweenCards;
 
             for (var i = 0; i < _cards.Length; i++)
             {

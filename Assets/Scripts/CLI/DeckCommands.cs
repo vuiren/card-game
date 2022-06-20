@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using QFSW.QC;
+﻿using QFSW.QC;
 using Services;
 using UnityEngine;
 using Zenject;
@@ -8,9 +7,9 @@ namespace CLI
 {
     public class DeckCommands : MonoBehaviour
     {
-        private IPlayerService _playerService;
         private IDeckService _deckService;
-        
+        private IPlayerService _playerService;
+
         [Inject]
         public void Construct(IPlayerService playerService, IDeckService deckService)
         {

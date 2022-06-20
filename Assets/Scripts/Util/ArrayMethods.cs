@@ -9,10 +9,7 @@ namespace Util
         {
             var result = "";
 
-            foreach (var i in array)
-            {
-                result += i.ToString() + ',';
-            }
+            foreach (var i in array) result += i.ToString() + ',';
 
             if (result.Length > 0)
                 result = result.Remove(result.Length - 1);
@@ -24,6 +21,6 @@ namespace Util
             var ids = idsString.Split(',');
 
             return ids.Select(int.Parse).ToArray();
-        } 
+        }
     }
 }

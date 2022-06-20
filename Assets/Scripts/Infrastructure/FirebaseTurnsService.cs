@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Cysharp.Threading.Tasks;
-using Domain;
 using Domain.DTO;
 using Firebase.Database;
 using Scriptable_Objects;
@@ -13,12 +10,13 @@ using Zenject;
 
 namespace Infrastructure
 {
-    public class FirebaseTurnsService: ITurnsService
+    public class FirebaseTurnsService : ITurnsService
     {
-        private readonly DatabaseReference _gameRef;
         private readonly Configuration _configuration;
+        private readonly DatabaseReference _gameRef;
         private int _currentTurn = -1;
         private Action<int> _onTurnChanged;
+        private int[] _lastTurnsOrder;
 
         [Inject]
         public FirebaseTurnsService(Configuration configuration)
@@ -28,24 +26,16 @@ namespace Infrastructure
             _gameRef.ValueChanged += HandleChildChange;
         }
 
-        private void HandleChildChange(object sender, ValueChangedEventArgs e)
-        {
-            if(e.Snapshot?.Value == null) return;
-
-            var value = JsonUtility.FromJson<GameData>(e.Snapshot.GetRawJsonValue());
-            _currentTurn = value.currentTurnId;
-            _onTurnChanged?.Invoke(_currentTurn);
-        }
-
         public async void SetTurnsOrder(Queue<int> players)
         {
+            _lastTurnsOrder = players.ToArray();
             var gameData = new GameData();
             var orderString = ArrayMethods.TurnArrayToString(players);
 
             gameData.playersOrder = orderString;
             gameData.currentTurnId = players.Peek();
             _currentTurn = gameData.currentTurnId;
-            
+
             var jsonData = JsonUtility.ToJson(gameData);
 
             await _gameRef.SetRawJsonValueAsync(jsonData);
@@ -55,12 +45,12 @@ namespace Infrastructure
         {
             var value = await _gameRef.GetValueAsync();
             var gameData = JsonUtility.FromJson<GameData>(value.GetRawJsonValue());
-            
+
             var ids = ArrayMethods.TurnIdsStringToIntArray(gameData.playersOrder);
 
             var idsQueue = new Queue<int>(ids);
             idsQueue.Dequeue();
-            
+
             gameData.playersOrder = ArrayMethods.TurnArrayToString(idsQueue);
             gameData.currentTurnId = idsQueue.Count > 0 ? idsQueue.Peek() : -1;
 
@@ -77,6 +67,20 @@ namespace Infrastructure
         public void OnTurnChange(Action<int> action)
         {
             _onTurnChanged += action;
+        }
+
+        public IEnumerable<int> GetLastTurnsOrder()
+        {
+            return _lastTurnsOrder;
+        }
+
+        private void HandleChildChange(object sender, ValueChangedEventArgs e)
+        {
+            if (e.Snapshot?.Value == null) return;
+
+            var value = JsonUtility.FromJson<GameData>(e.Snapshot.GetRawJsonValue());
+            _currentTurn = value.currentTurnId;
+            _onTurnChanged?.Invoke(_currentTurn);
         }
     }
 }

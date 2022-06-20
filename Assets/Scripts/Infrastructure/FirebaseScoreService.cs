@@ -8,39 +8,19 @@ using UnityEngine;
 
 namespace Infrastructure
 {
-    public class FirebaseScoreService: IScoreService
+    public class FirebaseScoreService : IScoreService
     {
-        private readonly DatabaseReference _playersReference;
         private readonly Configuration _configuration;
         private readonly Dictionary<int, int> _playerPoints = new();
+        private readonly DatabaseReference _playersReference;
         private Action _onScoreChanged;
 
         public FirebaseScoreService(Configuration configuration)
         {
             _configuration = configuration;
-            _playersReference = FirebaseDatabase.DefaultInstance.RootReference.Child(_configuration.gameId).Child("players");
+            _playersReference = FirebaseDatabase.DefaultInstance.RootReference.Child(_configuration.gameId)
+                .Child("players");
             _playersReference.ValueChanged += HandleChange;
-            
-        }
-
-        private void HandleChange(object sender, ValueChangedEventArgs e)
-        {
-            if(e.Snapshot?.Value == null) return;
-
-            foreach (var child in e.Snapshot.Children)
-            {
-                var value = JsonUtility.FromJson<PlayerData>(child.GetRawJsonValue());
-
-                if (_playerPoints.ContainsKey(value.id))
-                {
-                    _playerPoints[value.id] = value.winCount;
-                }
-                else
-                {
-                    _playerPoints.Add(value.id, value.winCount);
-                }
-            }
-            _onScoreChanged?.Invoke();
         }
 
         public async void AddPointToPlayer(int playerId)
@@ -51,19 +31,15 @@ namespace Infrastructure
             {
                 var playerData = JsonUtility.FromJson<PlayerData>(child.GetRawJsonValue());
                 if (playerData.id != playerId) continue;
-                
+
                 playerData.winCount++;
                 await _playersReference.Child(playerData.name).SetRawJsonValueAsync(JsonUtility.ToJson(playerData));
 
                 if (_playerPoints.ContainsKey(playerId))
-                {
                     _playerPoints[playerId] = playerData.winCount;
-                }
                 else
-                {
                     _playerPoints.Add(playerId, playerData.winCount);
-                }
-                
+
                 return;
             }
         }
@@ -76,6 +52,23 @@ namespace Infrastructure
         public void OnScoreChanged(Action action)
         {
             _onScoreChanged += action;
+        }
+
+        private void HandleChange(object sender, ValueChangedEventArgs e)
+        {
+            if (e.Snapshot?.Value == null) return;
+
+            foreach (var child in e.Snapshot.Children)
+            {
+                var value = JsonUtility.FromJson<PlayerData>(child.GetRawJsonValue());
+
+                if (_playerPoints.ContainsKey(value.id))
+                    _playerPoints[value.id] = value.winCount;
+                else
+                    _playerPoints.Add(value.id, value.winCount);
+            }
+
+            _onScoreChanged?.Invoke();
         }
     }
 }

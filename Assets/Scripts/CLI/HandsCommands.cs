@@ -1,6 +1,5 @@
 ﻿using Controllers;
 using QFSW.QC;
-using Services;
 using UnityEngine;
 using Zenject;
 
@@ -9,7 +8,7 @@ namespace CLI
     public class HandsCommands : MonoBehaviour
     {
         private HandsController _handsController;
-        
+
         [Inject]
         public void Construct(HandsController handsController)
         {
@@ -25,12 +24,9 @@ namespace CLI
         [Command("hands.getHand")]
         public void GetHand(int playerId)
         {
-            var hand=_handsController.GetHand(playerId);
+            var hand = _handsController.GetHand(playerId);
 
-            foreach (var card in hand)
-            {
-                Debug.Log(card);
-            }
+            foreach (var card in hand) Debug.Log(card);
         }
     }
 }

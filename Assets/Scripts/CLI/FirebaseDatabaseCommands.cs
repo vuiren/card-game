@@ -1,9 +1,7 @@
-﻿using System;
-using Firebase.Database;
+﻿using Firebase.Database;
 using Infrastructure;
 using QFSW.QC;
 using UnityEngine;
-using Zenject;
 
 namespace CLI
 {
@@ -25,19 +23,16 @@ namespace CLI
                 name = "Alex",
                 message = message
             };
-            _reference.Child("Testing").SetRawJsonValueAsync(JsonUtility.ToJson(testData)).ContinueWith((x) =>
+            _reference.Child("Testing").SetRawJsonValueAsync(JsonUtility.ToJson(testData)).ContinueWith(x =>
             {
-                if (x.IsCompleted)
-                {
-                    Debug.Log("Data sended");
-                }
+                if (x.IsCompleted) Debug.Log("Data sended");
             });
         }
 
         [Command("database.testLoad")]
         public void TestLoad()
         {
-            _reference.Child("Testing").GetValueAsync().ContinueWith((task) =>
+            _reference.Child("Testing").GetValueAsync().ContinueWith(task =>
             {
                 if (task.IsCompleted)
                 {

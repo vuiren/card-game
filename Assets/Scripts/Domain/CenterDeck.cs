@@ -1,5 +1,4 @@
-﻿using Scriptable_Objects;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Domain
 {

@@ -18,7 +18,8 @@ namespace Services
 
             var centerDeckService = new FirebaseCenterDeckService(configuration);
             container.Bind<ICenterDeckService>().FromInstance(centerDeckService).AsSingle();
-            container.Bind<ISessionService>().FromInstance(new FirebaseSessionService(configuration, centerDeckService)).AsSingle();
+            container.Bind<ISessionService>().FromInstance(new FirebaseSessionService(configuration, centerDeckService))
+                .AsSingle();
 
             var decks = Object.FindObjectsOfType<PlayerDeck>();
             container.Bind<IDeckService>().FromInstance(new FirebaseDeckService(decks)).AsSingle();

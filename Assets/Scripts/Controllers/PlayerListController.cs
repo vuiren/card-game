@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Domain;
 using Domain.DTO;
 using Services;
 using TMPro;
@@ -8,18 +7,18 @@ using Zenject;
 
 namespace Controllers
 {
-    public class PlayerListController: MonoBehaviour
+    public class PlayerListController : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI playersList, currentTurnText;
-        private IPlayerService _playerService;
         private Coroutine _listUpdateRoutine;
-        
+        private IPlayerService _playerService;
+
         [Inject]
         public void Construct(IPlayerService playerService, ITurnsService turnsService)
         {
             _playerService = playerService;
             _playerService.OnPlayerListChanged(UpdateList);
-            
+
             turnsService.OnTurnChange(UpdateCurrentTurn);
         }
 
@@ -27,13 +26,9 @@ namespace Controllers
         {
             var player = _playerService.GetPlayer(obj);
             if (player == null)
-            {
                 currentTurnText.text = "Подводим результаты";
-            }
             else
-            {
                 currentTurnText.text = $"Ход игрока: {player.name}";
-            }
         }
 
         private void UpdateList(List<PlayerData> obj)
@@ -42,7 +37,7 @@ namespace Controllers
             for (var index = 0; index < obj.Count; index++)
             {
                 var playerData = obj[index];
-                playersList.text += (index + 1) + ". " + playerData.name + '\n';
+                playersList.text += index + 1 + ". " + playerData.name + '\n';
             }
         }
     }

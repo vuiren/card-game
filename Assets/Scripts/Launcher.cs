@@ -1,7 +1,5 @@
-﻿using System;
-using Cysharp.Threading.Tasks;
-using Domain;
-using Domain.DTO;
+﻿using Domain.DTO;
+using Firebase;
 using Firebase.Database;
 using Scriptable_Objects;
 using TMPro;
@@ -12,22 +10,22 @@ public class Launcher : MonoBehaviour
 {
     [SerializeField] private Configuration _configuration;
     [SerializeField] private TextMeshProUGUI statusText;
-    private DatabaseReference _databaseReference;
     private bool _connected;
+    private DatabaseReference _databaseReference;
 
     private void Start()
     {
         statusText.text = "Connecting...";
         _databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
-        var app = Firebase.FirebaseApp.DefaultInstance;
-        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+        var app = FirebaseApp.DefaultInstance;
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
             var dependencyStatus = task.Result;
-            if (dependencyStatus == Firebase.DependencyStatus.Available)
+            if (dependencyStatus == DependencyStatus.Available)
             {
                 // Create and hold a reference to your FirebaseApp,
                 // where app is a Firebase.FirebaseApp property of your application class.
-                app = Firebase.FirebaseApp.DefaultInstance;
+                app = FirebaseApp.DefaultInstance;
                 statusText.text = "Connected";
                 _connected = true;
                 // Set a flag here to indicate whether Firebase is ready to use by your app.
@@ -39,7 +37,6 @@ public class Launcher : MonoBehaviour
                 // Firebase Unity SDK is not safe to use here.
             }
         });
-
     }
 
     public void SetName(string name)
@@ -92,6 +89,5 @@ public class Launcher : MonoBehaviour
             .SetRawJsonValueAsync(gameDataJson);
 
         SceneManager.LoadScene(1);
-
     }
 }

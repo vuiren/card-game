@@ -7,33 +7,19 @@ namespace Controllers
     {
         public static void Inject(DiContainer container)
         {
-            var handsController = Object.FindObjectOfType<HandsController>();
-            if (!handsController)
-            {
-                Debug.LogError("No hands controller found");
-            }
-            container.BindInstance(handsController).AsSingle();
-            
-            var centerDeckController = Object.FindObjectOfType<CenterDeckController>();
-            if (!centerDeckController)
-            {
-                Debug.LogError("No centerDeckController found");
-            }
-            container.BindInstance(centerDeckController).AsSingle();
-            
-            var gameController = Object.FindObjectOfType<GameController>();
-            if (!gameController)
-            {
-                Debug.LogError("No gameController found");
-            }
-            container.BindInstance(gameController).AsSingle();
-            
-            var betsController = Object.FindObjectOfType<BetsController>();
-            if (!betsController)
-            {
-                Debug.LogError("No betsController found");
-            }
-            container.BindInstance(betsController).AsSingle();
+            InjectController<HandsController>(container);
+            InjectController<CenterDeckController>(container);
+            InjectController<GameController>(container);
+            InjectController<BetsController>(container);
+            InjectController<WaitingAnimationController>(container);
+            InjectController<LocalPlayerCardsController>(container);
+        }
+
+        private static void InjectController<T>(DiContainer container) where T : MonoBehaviour
+        {
+            var controllerInstance = Object.FindObjectOfType<T>();
+            if (!controllerInstance) Debug.LogError($"Controller typeof '{typeof(T)}' not found");
+            container.BindInstance(controllerInstance).AsSingle();
         }
     }
 }

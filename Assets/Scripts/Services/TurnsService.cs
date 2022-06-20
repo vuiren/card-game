@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
-using UnityEngine;
+using Domain.DTO;
 
 namespace Services
 {
@@ -11,5 +10,6 @@ namespace Services
         void NextTurn();
         int CurrentTurn();
         void OnTurnChange(Action<int> action);
+        IEnumerable<int> GetLastTurnsOrder();
     }
 }

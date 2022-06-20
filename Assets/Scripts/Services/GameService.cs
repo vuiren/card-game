@@ -4,5 +4,6 @@
     {
         bool IsHostReady();
         void SetHostReady(bool ready);
+        void DeleteGameData();
     }
 }

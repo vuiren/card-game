@@ -1,5 +1,4 @@
-﻿using Controllers;
-using QFSW.QC;
+﻿using QFSW.QC;
 using Services;
 using UnityEngine;
 using Zenject;
@@ -20,8 +19,8 @@ namespace CLI
         public void GetPlayer(int id)
         {
             var player = _playerService.GetPlayer(id);
-            if(player == null) return;
-            
+            if (player == null) return;
+
             Debug.Log($"Player found: '{player}'");
         }
 
@@ -30,10 +29,7 @@ namespace CLI
         {
             var players = _playerService.GetAllPlayers();
 
-            foreach (var player in players)
-            {
-                Debug.Log($"Player: '{player}'");
-            }
+            foreach (var player in players) Debug.Log($"Player: '{player}'");
         }
     }
 }

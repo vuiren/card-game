@@ -1,5 +1,4 @@
-﻿using Controllers;
-using QFSW.QC;
+﻿using QFSW.QC;
 using Services;
 using UnityEngine;
 using Zenject;
@@ -9,7 +8,7 @@ namespace CLI
     public class TurnsCommands : MonoBehaviour
     {
         private ITurnsService _turnsService;
-        
+
         [Inject]
         public void Construct(ITurnsService turnsService)
         {
@@ -20,7 +19,7 @@ namespace CLI
         public void CurrentTurn()
         {
             var current = _turnsService.CurrentTurn();
-            
+
             Debug.Log($"Current turn: '{current}'");
         }
 
@@ -28,7 +27,7 @@ namespace CLI
         public void NextTurn()
         {
             _turnsService.NextTurn();
-            
+
             CurrentTurn();
         }
     }

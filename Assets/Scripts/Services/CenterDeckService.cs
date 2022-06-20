@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using Domain;
 using Scriptable_Objects;
-using UnityEngine;
 
 namespace Services
 {

@@ -1,5 +1,4 @@
 ﻿using Firebase.Database;
-using UnityEngine;
 
 namespace Infrastructure
 {
@@ -15,7 +14,6 @@ namespace Infrastructure
 
         public void SaveDataToDatabase()
         {
-
         }
     }
 }

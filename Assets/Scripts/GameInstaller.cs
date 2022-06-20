@@ -8,11 +8,12 @@ using Zenject;
 public class GameInstaller : MonoInstaller
 {
     [SerializeField] private Configuration configuration;
+
     public override void InstallBindings()
     {
         Container.BindInstance(configuration).AsSingle();
         ServicesDependencyInjection.Inject(configuration, Container);
         ControllersDependencyInjection.Inject(Container);
-        FactoriesDependencyInjection.Inject(Container);
+        FactoriesDependencyInjection.Inject(configuration, Container);
     }
 }

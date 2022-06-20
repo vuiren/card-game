@@ -6,16 +6,16 @@ using UnityEngine;
 
 namespace Infrastructure
 {
-    public class FirebaseDeckService: IDeckService
+    public class FirebaseDeckService : IDeckService
     {
-        private readonly Queue<PlayerDeck> _playerDecks;
-        private readonly PlayerDeck _mainDeck;
         private readonly Dictionary<int, PlayerDeck> _deckAssignments = new();
+        private readonly PlayerDeck _mainDeck;
+        private readonly Queue<PlayerDeck> _playerDecks;
 
         public FirebaseDeckService(IEnumerable<PlayerDeck> playerDecks)
         {
             var collection = playerDecks as PlayerDeck[] ?? playerDecks.ToArray();
-            _playerDecks = new Queue<PlayerDeck>(collection.Where(x=>!x.mainDeck));
+            _playerDecks = new Queue<PlayerDeck>(collection.Where(x => !x.mainDeck));
             _mainDeck = collection.FirstOrDefault(x => x.mainDeck);
         }
 
@@ -33,7 +33,7 @@ namespace Infrastructure
 
         public PlayerDeck GetPlayerDeck(int playerId)
         {
-           return _deckAssignments[playerId];
+            return _deckAssignments[playerId];
         }
 
         public void ClearPlayerDeck(int playerId)
@@ -45,7 +45,7 @@ namespace Infrastructure
                 Debug.LogWarning("No deck found for clear");
                 return;
             }
-            
+
             for (var i = 0; i < deck.hand.childCount; i++)
             {
                 var child = deck.hand.transform.GetChild(i);
