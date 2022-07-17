@@ -22,7 +22,31 @@ public class GameManager : MonoBehaviour
     private IPlayerService _playerService;
     private ITurnsService _turnsService;
     private WaitingAnimationController _waitingAnimationController;
+    private WeightsUIController _weightsUIController;
+    private WeightsController _weightsController;
+    private PlayerListController _playerListController;
 
+    [Inject]
+    public void Construct(Configuration configuration, ITurnsService turnsService, HandsController handsController,
+        CenterDeckController centerDeckController, ISessionService sessionService, IGameService gameService,
+        IPlayerService playerService, IDeckService deckService, CardsFactory cardsFactory,
+        BetsController betsController, WaitingAnimationController waitingAnimationController,
+        WeightsUIController weightsUIController, WeightsController weightsController, PlayerListController playerListController)
+    {
+        _betsController = betsController;
+        _playerListController = playerListController;
+        _waitingAnimationController = waitingAnimationController;
+        _configuration = configuration;
+        _turnsService = turnsService;
+        _weightsController = weightsController;
+        _weightsUIController = weightsUIController;
+        _handsController = handsController;
+        _centerDeckController = centerDeckController;
+        _deckService = deckService;
+        _playerService = playerService;
+        _gameService = gameService;
+    }
+    
     private async void Start()
     {
         statusText.text = "Waiting for players";
@@ -37,7 +61,9 @@ public class GameManager : MonoBehaviour
 
         if (_configuration.isHost)
         {
-            _turnsService.SetTurnsOrder(new Queue<int>(players.Select(x => x.id)));
+            var queue = new Queue<int>(players.Select(x => x.id));
+            _turnsService.SetTurnsOrder(queue);
+            _betsController.SetTurnsOrder(queue);
             _centerDeckController.CreateCenterDeck();
             await Tasks.Delay();
             foreach (var player in players)
@@ -45,7 +71,7 @@ public class GameManager : MonoBehaviour
                 _configuration.lastHandCount = 1;
                 var cards = _centerDeckController.GetCardsFromCenterDeck(1);
                 _handsController.CreateHand(player.id, cards);
-                _betsController.MakeABet(player.id, -1);
+                _betsController.MakeABet(player.id, 0);
             }
 
             _gameService.SetHostReady(true);
@@ -61,34 +87,19 @@ public class GameManager : MonoBehaviour
             _handsController.CreateHand(_configuration.playerId, hand);
         }
 
-        _betsController.ShowUI();
+        _weightsController.SetRightWeight(_configuration.lastHandCount);
+        _weightsUIController.ShowUI();
         statusText.text = "Делаем ставки, господа";
         await Tasks.Delay();
-        await Tasks.WaitForBets(_playerService.GetAllPlayers, _betsController.GetPlayerBet);
-        _betsController.HideUI();
+        await Tasks.WaitForBets(_playerService.GetAllPlayers, _betsController.BetsSet);
         _waitingAnimationController.HideWaitingAnimation();
+        _weightsUIController.HideUI();
+        _playerListController.UpdateCurrentTurn(_turnsService.CurrentTurn());
     }
 
     private void OnDestroy()
     {
         if (_configuration.isHost) _gameService.DeleteGameData();
-    }
-
-    [Inject]
-    public void Construct(Configuration configuration, ITurnsService turnsService, HandsController handsController,
-        CenterDeckController centerDeckController, ISessionService sessionService, IGameService gameService,
-        IPlayerService playerService, IDeckService deckService, CardsFactory cardsFactory,
-        BetsController betsController, WaitingAnimationController waitingAnimationController)
-    {
-        _betsController = betsController;
-        _waitingAnimationController = waitingAnimationController;
-        _configuration = configuration;
-        _turnsService = turnsService;
-        _handsController = handsController;
-        _centerDeckController = centerDeckController;
-        _deckService = deckService;
-        _playerService = playerService;
-        _gameService = gameService;
     }
 
     private async UniTask WaitForAllPlayers()

@@ -21,25 +21,15 @@ namespace Controllers
 
         private void ShowWinner(int obj)
         {
-            Debug.Log("==============NOOOOOTICE ME!!!!============");
-            Debug.Log("Check 1!!!!");
             var player = _playerService.GetPlayer(obj);
-            Debug.Log("Check 2!!!!");
-
             winnerNameText.text = $"Игрок {player.name}!";
-            Debug.Log("Check 3!!!!");
-
             WinnerShowing();
         }
 
         private async UniTask WinnerShowing()
         {
-            Debug.Log("Check 4!!!!");
-
             winnerUI.SetActive(true);
             await Tasks.Delay(2000);
-            Debug.Log("Check 51!!!!");
-
             winnerUI.SetActive(false);
         }
     }

@@ -7,23 +7,17 @@ namespace Util
 {
     public static class Tasks
     {
-        public static async UniTask WaitForBets(Func<IEnumerable<PlayerData>> players, Func<int, int> getPlayerBet)
+        public static async UniTask WaitForBets(Func<IEnumerable<PlayerData>> players, Func<bool> betsSet)
         {
             var ready = false;
             while (!ready)
             {
                 await Delay();
 
-                foreach (var playerData in players())
+                if (betsSet())
                 {
-                    var bet = getPlayerBet(playerData.id);
-                    if (bet == -1)
-                    {
-                        ready = false;
-                        break;
-                    }
-
                     ready = true;
+                    break;
                 }
             }
         }

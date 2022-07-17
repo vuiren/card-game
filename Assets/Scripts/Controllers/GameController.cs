@@ -25,16 +25,23 @@ namespace Controllers
         private IScoreService _scoreService;
         private ISessionService _sessionService;
         private ITurnsService _turnsService;
+        private WeightsUIController _weightsUIController;
+        private WeightsController _weightsController;
+        private PlayerListController _playerListController;
 
         [Inject]
         public void Construct(Configuration configuration, CenterDeckController centerDeckController,
             CardsFactory cardsFactory, IDeckService deckService, HandsController handsController,
             ISessionService sessionService, ITurnsService turnsService, IPlayerService playerService,
-            IScoreService scoreService,
-            IGameService gameService, BetsController betsController)
+            IScoreService scoreService, WeightsUIController weightsUIController,
+            IGameService gameService, BetsController betsController, WeightsController weightsController,
+            PlayerListController playerListController)
         {
             _centerDeckController = centerDeckController;
             _gameService = gameService;
+            _playerListController = playerListController;
+            _weightsController = weightsController;
+            _weightsUIController = weightsUIController;
             _betsController = betsController;
             _scoreService = scoreService;
             _playerService = playerService;
@@ -69,6 +76,7 @@ namespace Controllers
                 var tempPlayer = playersQueue.Dequeue();
                 playersQueue.Enqueue(tempPlayer);
                 _turnsService.SetTurnsOrder(playersQueue);
+                _betsController.SetTurnsOrder(playersQueue);
             }
 
 
@@ -105,10 +113,11 @@ namespace Controllers
                 {
                     var cards = _centerDeckController.GetCardsFromCenterDeck(_configuration.lastHandCount + 1);
                     _handsController.CreateHand(player.id, cards);
-                    _betsController.MakeABet(player.id, -1);
+                    _betsController.MakeABet(player.id, 0);
                 }
 
                 _configuration.lastHandCount++;
+                _gameService.SetCardsInHandsCount(_configuration.lastHandCount);
 
                 await Tasks.Delay();
                 _gameService.SetHostReady(true);
@@ -125,11 +134,15 @@ namespace Controllers
             }
 
 
-            _betsController.ShowUI();
             statusText.text = "Делаем ставки, господа";
+            var cardsInHandsCount = _gameService.GetCardsInHandsCount();
+            _configuration.lastHandCount = cardsInHandsCount;
+            _weightsController.SetRightWeight(_configuration.lastHandCount);
+            _weightsUIController.ShowUI();
 
-            await Tasks.WaitForBets(_playerService.GetAllPlayers, _betsController.GetPlayerBet);
-            _betsController.HideUI();
+            await Tasks.WaitForBets(_playerService.GetAllPlayers, _betsController.BetsSet);
+            _weightsUIController.HideUI();
+            _playerListController.UpdateCurrentTurn(_turnsService.CurrentTurn());
         }
 
         public void MakeAStep(int playerId, CardSheet card)

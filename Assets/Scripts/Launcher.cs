@@ -10,7 +10,6 @@ public class Launcher : MonoBehaviour
 {
     [SerializeField] private Configuration _configuration;
     [SerializeField] private TextMeshProUGUI statusText;
-    private bool _connected;
     private DatabaseReference _databaseReference;
 
     private void Start()
@@ -23,12 +22,8 @@ public class Launcher : MonoBehaviour
             var dependencyStatus = task.Result;
             if (dependencyStatus == DependencyStatus.Available)
             {
-                // Create and hold a reference to your FirebaseApp,
-                // where app is a Firebase.FirebaseApp property of your application class.
                 app = FirebaseApp.DefaultInstance;
                 statusText.text = "Connected";
-                _connected = true;
-                // Set a flag here to indicate whether Firebase is ready to use by your app.
             }
             else
             {

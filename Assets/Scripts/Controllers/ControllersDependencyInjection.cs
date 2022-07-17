@@ -13,6 +13,9 @@ namespace Controllers
             InjectController<BetsController>(container);
             InjectController<WaitingAnimationController>(container);
             InjectController<LocalPlayerCardsController>(container);
+            InjectController<WeightsController>(container);
+            InjectController<WeightsUIController>(container);
+            InjectController<PlayerListController>(container);
         }
 
         private static void InjectController<T>(DiContainer container) where T : MonoBehaviour

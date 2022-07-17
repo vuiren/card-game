@@ -7,8 +7,8 @@ namespace Domain.DTO
     {
         public bool hostReady;
         public int currentTurnId;
+        public int cardsInHandsCount;
         public int lastId;
-        public int[] cardsInCenterIds;
         public string playersOrder;
     }
 }

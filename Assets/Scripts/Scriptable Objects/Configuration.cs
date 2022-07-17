@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Domain;
+using UnityEngine;
 
 namespace Scriptable_Objects
 {
@@ -10,6 +11,7 @@ namespace Scriptable_Objects
         public int playersCount;
         public int lastHandCount;
         public bool isHost;
+        public PlayerColor[] PlayerColors;
         public BackgroundSuit[] BackgroundSuits;
         public CardSheet[] cardsInGame;
         public GameObject cardPrefab;

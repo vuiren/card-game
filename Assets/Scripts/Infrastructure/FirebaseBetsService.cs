@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Cysharp.Threading.Tasks;
 using Domain.DTO;
 using Firebase.Database;
+using Mono.CSharp;
 using Scriptable_Objects;
 using Services;
 using UnityEngine;
+using Util;
 
 namespace Infrastructure
 {
@@ -12,15 +16,44 @@ namespace Infrastructure
     {
         private readonly Configuration _configuration;
         private readonly Dictionary<int, int> _playerBets = new();
-        private readonly DatabaseReference _playersReference;
-        private Action _onBetChanged;
+        private readonly DatabaseReference _playersReference, _betsQueueReference;
+        private Action _onBetChanged, _onBetPlayerChanged;
+        private int _currentBetPlayerId = -1;
+        private BetsQueueData lastQueueData;
 
         public FirebaseBetsService(Configuration configuration)
         {
             _configuration = configuration;
             _playersReference = FirebaseDatabase.DefaultInstance.RootReference.Child(_configuration.gameId)
                 .Child("players");
+            _betsQueueReference = _playersReference.Parent.Child("BetsQueue");
+            _betsQueueReference.ValueChanged += HandleBetsQueueChange;
             _playersReference.ValueChanged += HandleChange;
+        }
+
+        private void HandleBetsQueueChange(object sender, ValueChangedEventArgs e)
+        {
+            if (e.Snapshot?.Value == null) return;
+            var value = JsonUtility.FromJson<BetsQueueData>(e.Snapshot.GetRawJsonValue());
+            _currentBetPlayerId = value.currentPlayerId;
+            lastQueueData = value;
+            _onBetPlayerChanged?.Invoke();
+        }
+
+        private void HandleChange(object sender, ValueChangedEventArgs e)
+        {
+            if (e.Snapshot?.Value == null) return;
+
+            foreach (var child in e.Snapshot.Children)
+            {
+                var value = JsonUtility.FromJson<PlayerData>(child.GetRawJsonValue());
+                if (_playerBets.ContainsKey(value.id))
+                    _playerBets[value.id] = value.betsCount;
+                else
+                    _playerBets.Add(value.id, value.betsCount);
+            }
+
+            _onBetChanged?.Invoke();
         }
 
         public async void MakeABet(int playerId, int bet)
@@ -43,7 +76,6 @@ namespace Infrastructure
             }
         }
 
-
         public int GetPlayerBet(int playerId)
         {
             return _playerBets.ContainsKey(playerId) ? _playerBets[playerId] : 0;
@@ -54,20 +86,51 @@ namespace Infrastructure
             _onBetChanged += onBetsChanged;
         }
 
-        private void HandleChange(object sender, ValueChangedEventArgs e)
+        public void OnBetPlayerChanged(Action onBetPlayerChanged)
         {
-            if (e.Snapshot?.Value == null) return;
+            _onBetPlayerChanged += onBetPlayerChanged;
+        }
 
-            foreach (var child in e.Snapshot.Children)
+        public int GetCurrentBetPlayer() => _currentBetPlayerId;
+        public async void SetTurnsOrder(Queue<int> turnsOrder)
+        {
+            var betsQueueData = new BetsQueueData();
+            var orderString = ArrayMethods.TurnArrayToString(turnsOrder);
+
+            betsQueueData.playersQueue = orderString;
+            betsQueueData.currentPlayerId = turnsOrder.Peek();
+            betsQueueData.done = false;
+            _currentBetPlayerId = betsQueueData.currentPlayerId;
+
+            var jsonData = JsonUtility.ToJson(betsQueueData);
+
+            await _betsQueueReference.SetRawJsonValueAsync(jsonData);
+        }
+
+        public async UniTask FinishMakingBet()
+        {
+            var value = await _betsQueueReference.GetValueAsync();
+            var queueData = JsonUtility.FromJson<BetsQueueData>(value.GetRawJsonValue());
+            var queue = new Queue<int>(ArrayMethods.TurnIdsStringToIntArray(queueData.playersQueue));
+            queue.Dequeue();
+            if (queue.Count == 0)
             {
-                var value = JsonUtility.FromJson<PlayerData>(child.GetRawJsonValue());
-                if (_playerBets.ContainsKey(value.id))
-                    _playerBets[value.id] = value.betsCount;
-                else
-                    _playerBets.Add(value.id, value.betsCount);
+                queueData.currentPlayerId = -1;
+                queueData.playersQueue = "";
+                queueData.done = true;
             }
+            else
+            {
+                var newId = queue.Peek();
+                queueData.currentPlayerId = newId;
+                queueData.playersQueue = ArrayMethods.TurnArrayToString(queue.ToArray());
+            }
+            await _betsQueueReference.SetRawJsonValueAsync(JsonUtility.ToJson(queueData));
+        }
 
-            _onBetChanged?.Invoke();
+        public bool BetsSet()
+        {
+            return lastQueueData.done;
         }
     }
 }

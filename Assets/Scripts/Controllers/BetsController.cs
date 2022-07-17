@@ -1,15 +1,14 @@
-﻿using Scriptable_Objects;
+﻿using System.Collections.Generic;
+using Scriptable_Objects;
 using Services;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
 namespace Controllers
 {
     public class BetsController : MonoBehaviour
     {
-        [SerializeField] private GameObject betsUI;
         [SerializeField] private TextMeshProUGUI playerBetsText, betText;
         private int _bet;
         private IBetsService _betsService;
@@ -44,16 +43,9 @@ namespace Controllers
             return _betsService.GetPlayerBet(playerId);
         }
 
-        public void ShowUI()
+        public void SetTurnsOrder(Queue<int> queue)
         {
-            betsUI.SetActive(true);
-            var buttons = betsUI.GetComponentsInChildren<Button>();
-            foreach (var button in buttons) button.interactable = true;
-        }
-
-        public void HideUI()
-        {
-            betsUI.SetActive(false);
+            _betsService.SetTurnsOrder(queue);
         }
 
         public void SetLocalPlayerBet()
@@ -72,6 +64,11 @@ namespace Controllers
             _bet--;
             _bet = _bet < 0 ? 0 : _bet;
             betText.text = _bet.ToString();
+        }
+
+        public bool BetsSet()
+        {
+            return _betsService.BetsSet();
         }
 
         public void SetBet(string bet)

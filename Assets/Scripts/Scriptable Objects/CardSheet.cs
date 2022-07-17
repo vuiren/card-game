@@ -5,10 +5,10 @@ namespace Scriptable_Objects
 {
     public enum Suit
     {
-        Spades,
-        Hearts,
-        Diamonds,
-        Clubs
+        Air,
+        Death,
+        Life,
+        Water
     }
 
     [Serializable]

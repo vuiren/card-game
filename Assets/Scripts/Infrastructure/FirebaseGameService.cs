@@ -11,6 +11,7 @@ namespace Infrastructure
         private readonly Configuration _configuration;
         private readonly DatabaseReference _gameReference;
         private bool _isHostReady;
+        private GameData _lastGameData;
 
         public FirebaseGameService(Configuration configuration)
         {
@@ -39,6 +40,23 @@ namespace Infrastructure
             });
         }
 
+        public void SetCardsInHandsCount(int count)
+        {
+            if (!_configuration.isHost) return;
+
+            _gameReference.GetValueAsync().ContinueWith(x =>
+            {
+                var gameData = JsonUtility.FromJson<GameData>(x.Result.GetRawJsonValue());
+                gameData.cardsInHandsCount = count;
+                _gameReference.SetRawJsonValueAsync(JsonUtility.ToJson(gameData));
+            });
+        }
+
+        public int GetCardsInHandsCount()
+        {
+            return _lastGameData.cardsInHandsCount;
+        }
+
         public void DeleteGameData()
         {
             FirebaseDatabase.DefaultInstance.RootReference.Child(_configuration.gameId).SetValueAsync(null);
@@ -49,6 +67,7 @@ namespace Infrastructure
             if (e.Snapshot?.Value == null) return;
 
             var value = JsonUtility.FromJson<GameData>(e.Snapshot.GetRawJsonValue());
+            _lastGameData = value;
             _isHostReady = value.hostReady;
         }
     }

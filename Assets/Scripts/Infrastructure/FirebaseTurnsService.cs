@@ -40,7 +40,7 @@ namespace Infrastructure
 
             await _gameRef.SetRawJsonValueAsync(jsonData);
         }
-
+        
         public async void NextTurn()
         {
             var value = await _gameRef.GetValueAsync();
